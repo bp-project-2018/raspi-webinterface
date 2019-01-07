@@ -2,6 +2,7 @@ var Api = {
 
 	token: null,
 	timeout: 30000,
+	enpoint: '',
 
 	setToken: function(token) {
 		Api.token = token
@@ -14,7 +15,7 @@ var Api = {
 				else resolve(res)
 			}
 			$.ajax({
-				url: url,
+				url: Api.enpoint + url,
 				type: method,
 				data: JSON.stringify(data),
 				contentType: 'application/json; charset=utf-8',
