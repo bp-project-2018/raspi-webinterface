@@ -50,14 +50,28 @@ $('#getDevices').click(function() {
 
 
 $('#loadData').click(function() {
-	var ctx = document.getElementById('canvas').getContext('2d');
-	var datapoints = [0, 20, 20, 60, 60, 120, 7, 180, 120, 125, 105, 110, 170];
+	var deviceId = $('#deviceId').val()
+	var sensorId = $('#sensorId').val()
+	var begin = Date.now()
+	begin.setDate(begin.getDate() - 1)
+	var end = Date.now()
+	var resolutionSeconds = 60*60
+	Api.queryData(deviceId, sensorId, begin, end, resolutionSeconds)
+		.then(res => {
+			// TODO!
+			console.log(res)
+			displayChart($('#canvas'), 'Demo Data', [{x:'2018-01-01 12:12:00', y:5},{x:'2018-01-02 12:12:00', y:1},{x:'2018-01-05 12:12:00', y:10}], '°C')
+		})
+		.catch(err => {
+			console.log(err)
+		})
+})
+
+function displayChart(canvas, title, datapoints, unit) {
 	var config = {
 		type: 'line',
 		data: {
-			labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
 			datasets: [{
-				label: 'Demo',
 				data: datapoints,
 				borderColor: 'rgb(54, 162, 235)',
 				backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -68,32 +82,38 @@ $('#loadData').click(function() {
 			responsive: true,
 			title: {
 				display: true,
-				text: 'Data'
+				text: title
 			},
-			tooltips: {
-				mode: 'index'
+			legend: {
+				display: false
 			},
 			scales: {
 				xAxes: [{
-					display: true,
-					scaleLabel: {
-						display: true
+					type: 'time',
+					time: {
+						parser: 'YYYY-MM-DD HH:mm:ss',
+						unit: 'time',
+						displayFormats: {
+							time: 'YYYY-MM-DD'
+						}
+					},
+					ticks: {
+						source: 'data',
+						autoSkip: true,
+						maxTicksLimit: 2
 					}
 				}],
 				yAxes: [{
 					display: true,
 					scaleLabel: {
 						display: true,
-						labelString: 'Value'
+						labelString: unit
 					},
-					ticks: {
-						suggestedMin: -10,
-						suggestedMax: 200,
-					}
 				}]
 			}
 		}
-	};
-	window.myLine = new Chart(ctx, config);
-});
-
+	}
+	var ctx = canvas.get(0).getContext('2d')
+	var chart = new Chart(ctx, config)
+	return chart
+}
