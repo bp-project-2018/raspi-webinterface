@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>IoT BP</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="css/normalize.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+	<div class="content">
+		<h1>BP Webinterface</h1>
+		<p>This interface demonstrates basic api usage of the iot-bp-server</p>
+		<hr>
+		<button id="getStatus">Get Status</button>
+		<p>Status: <span id="statusSpan">???</span></p>
+		<hr>
+		<button id="getToken">Get Token</button> <button id="clearToken">Clear Token</button>
+		<p>Token: <span id="tokenSpan">???</span></p>
+		<hr>
+		<button id="getDevices">Get Devices</button>
+		<p>Devices:</p>
+		<ul id="devicesList">
+			<li>...</li>
+			<li>...</li>
+		</ul>
+		<hr>
+		<button id="loadData">Get Data</button>
+		<input id="deviceId" type="text" placeholder="deviceId" />
+		<input id="sensorId" type="text" placeholder="sensorId" />
+		<br>
+		<div style="width:50%;height:300px;">
+			<canvas id="canvas"></canvas>
+		</div>
+	</div>
+
+	<script src="vendor/chart-2.7.3.bundle.min.js"></script>
+	<script src="vendor/jquery-3.3.1.min.js"></script>
+	<script src="js/api.js"></script>
+	<script src="js/app.js"></script>
+</body>
+
+</html>
