@@ -36,13 +36,15 @@ $('#getToken').click(function() {
 })
 
 $('#getDevices').click(function() {
+	var list = $('#devicesList').empty()	
 	Api.getDevices()
 		.then(res => {
-			// TODO
-			console.log(res)
+			for (var device of res.devices) {
+				list.append(`<li><b>${device.id}</b> with ${JSON.stringify(device.sensors)}</li>`)
+			}
 		})
 		.catch(err => {
-			$('#devicesList').html(`<li>Error: ${err}</li>`)
+			list.append(`<li>Error: ${err}</li>`)
 		})
 })
 
