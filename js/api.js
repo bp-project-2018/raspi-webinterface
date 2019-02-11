@@ -9,6 +9,7 @@ var Api = {
 	},
 
 	request: function(method, url, data) {
+		console.log(Api.enpoint + url)
 		return new Promise((resolve, reject) => {
 			var responseHandler = (res) => {
 				if (res.err) reject(res.err)
@@ -41,19 +42,15 @@ var Api = {
 	},
 
 	requestToken: function () {
-		return Api.get('/api/register', {}, callback)
+		return Api.get('/api/register', {})
 	},
 
 	getDevices: function () {
-		return Api.get('/api/getDevices', {}, callback)
+		return Api.get('/api/getDevices', {})
 	},
 
-	getData: function (deviceId, measurementId, beginDate, endDate, resolutionSeconds) {
-		return Api.post('/api/getData', { DeviceID: deviceId, MeasurementID: measurementId, BeginDate: beginDate, EndDate: endDate, ResolutionSeconds: resolutionSeconds }, callback)
-	},
-
-	updateDeviceName: function (deviceId, newName) {
-		return Api.post('/api/updateDeviceName', { DeviceID: deviceId, NewName: newName }, callback)
+	queryData: function (deviceId, measurementId, beginDate, endDate, resolutionSeconds) {
+		return Api.post('/api/queryData', { DeviceID: deviceId, SensorID: measurementId, BeginUnix: beginDate.getTime()/1000, EndUnix: endDate.getTime()/1000, ResolutionSeconds: resolutionSeconds })
 	}
 
 }
