@@ -52,15 +52,16 @@ $('#getDevices').click(function() {
 $('#loadData').click(function() {
 	var deviceId = $('#deviceId').val()
 	var sensorId = $('#sensorId').val()
-	var begin = Date.now()
-	begin.setDate(begin.getDate() - 1)
-	var end = Date.now()
-	var resolutionSeconds = 60*60
+	var begin = new Date()
+	begin.setHours(begin.getHours() - 1)
+	var end = new Date()
+	var resolutionSeconds = 1
 	Api.queryData(deviceId, sensorId, begin, end, resolutionSeconds)
 		.then(res => {
 			// TODO!
 			console.log(res)
-			displayChart($('#canvas'), 'Demo Data', [{x:'2018-01-01 12:12:00', y:5},{x:'2018-01-02 12:12:00', y:1},{x:'2018-01-05 12:12:00', y:10}], '°C')
+			var normalized = res.datapoints.map(data => ({ x: data[0], y: data[1] }))
+			displayChart($('#canvas'), 'Demo Data', normalized, '°C')
 		})
 		.catch(err => {
 			console.log(err)
@@ -91,16 +92,16 @@ function displayChart(canvas, title, datapoints, unit) {
 				xAxes: [{
 					type: 'time',
 					time: {
-						parser: 'YYYY-MM-DD HH:mm:ss',
+						parser: 'YYYY-MM-DDTHH:mm:ssZ',
 						unit: 'time',
 						displayFormats: {
-							time: 'YYYY-MM-DD'
+							time: 'MM-DD HH:mm:ss'
 						}
 					},
 					ticks: {
 						source: 'data',
 						autoSkip: true,
-						maxTicksLimit: 2
+						maxTicksLimit: 5
 					}
 				}],
 				yAxes: [{
@@ -109,6 +110,9 @@ function displayChart(canvas, title, datapoints, unit) {
 						display: true,
 						labelString: unit
 					},
+					ticks: {
+						beginAtZero: true
+					}
 				}]
 			}
 		}
