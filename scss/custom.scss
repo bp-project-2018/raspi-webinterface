@@ -1,0 +1,11 @@
+// Custom.scss
+
+// Variable overrides
+// e.g. $body-bg: #000;
+
+$theme-colors: (
+        "primary": #005aa9,
+);
+
+// Required
+@import "../bootstrap/scss/bootstrap";

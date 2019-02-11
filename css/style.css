@@ -5,3 +5,22 @@ body {
 .content {
 	margin: 2em;
 }
+
+.sidebar {
+	padding: 0;
+	/*background-color: #363636;
+	color: #f0f0f0;*/
+}
+
+.list-group-item {
+	border: none;
+	background-color: transparent;
+}
+
+#sensor-menu-header {
+	margin: 1em 0 0.5em 0.5em;
+}
+
+.version-info {
+	padding: 1em 1em 1em 2em;
+}
