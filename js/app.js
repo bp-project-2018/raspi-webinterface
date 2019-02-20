@@ -34,20 +34,21 @@ function setApiToken(token) {
 	Model.token = token
 	Api.setToken(token)
 	saveModel()
-	$('#tokenSpan').html(Model.token || '???')
 }
 
 function getMeasurementTitle(device, sensor) {
-	var titleId = `${device.id}$${sensor.id}`
+	var titleId = `${device.id}/${sensor.id}`
 	var stored = Model.titles[titleId]
 	var suggested = `${device.id} ${sensor.type} ${sensor.id}`
 	return stored || suggested
 }
 
 function setMeasurementTitle(device, sensor, title) {
-	var titleId = `${device.id}$${sensor.id}`
+	var titleId = `${device.id}/${sensor.id}`
 	Model.titles[titleId] = title
-	saveModel()
+    $(`label[deviceId=${device.id}][sensorId=${sensor.id}] .titlespan`).html(title)
+    updateAllCanvas()
+    saveModel()
 }
 
 function displayDateRelativeToNow(date) {
@@ -128,11 +129,11 @@ function displayChart(canvas, title, datapoints, unit, chartColor) {
 }
 
 function isSensorDisabled(device, sensor) {
-    return Model.disabled[`${device.id}$${sensor.id}`] || false
+    return Model.disabled[`${device.id}/${sensor.id}`] || false
 }
 
 function setSensorDisabled(device, sensor, disabled) {
-    Model.disabled[`${device.id}$${sensor.id}`] = disabled
+    Model.disabled[`${device.id}/${sensor.id}`] = disabled
     var card = $(`.card[deviceId=${device.id}][sensorId=${sensor.id}]`)
     if (disabled) card.hide()
     else card.show()
@@ -158,7 +159,7 @@ function loadCards() {
                     var label = $(`<label class="list-group-item list-group-item-action" deviceId="${device.id}" sensorId="${sensor.id}">
                                         <span class="custom-control custom-checkbox">
                                             <input type="checkbox" class="custom-control-input hidebox" ${disabled ? '' : 'checked'}>
-                                            <span class="custom-control-label">${getMeasurementTitle(device, sensor)}</span>
+                                            <span class="custom-control-label titlespan">${getMeasurementTitle(device, sensor)}</span>
                                         </span>
                                     </label>`)
                     menu.append(label)
@@ -209,7 +210,6 @@ function cardTitleUpdated() {
     var device = Model.devices.filter(x => x.id == deviceId)[0]
     var sensor = device.sensors.filter(x => x.id == sensorId)[0]
     setMeasurementTitle(device, sensor, title)
-    updateAllCanvas()
 }
 
 function hideBoxChanged() {
