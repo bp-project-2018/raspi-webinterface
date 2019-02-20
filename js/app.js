@@ -13,8 +13,7 @@ function randomColor() {
 
 function loadModel() {
 	var json = localStorage.getItem('iot-bp-model')
-	if (!json) return null
-    window.Model = JSON.parse(json)
+	if (json) window.Model = JSON.parse(json)
    
     window.Model = window.Model || {}
     Model.token = Model.token || ''
@@ -61,9 +60,21 @@ function displayDateRelativeToNow(date) {
 	return `-${Math.floor(delta/31536000*10)/10}y`
 }
 
-function ensureConnection(callback) {
-    // TODO
-    callback()
+function ensureConnection(successCallback) {
+    Api.getStatus()
+		.then(successCallback)
+		.catch(err => {
+            $('#authentication-modal').modal('show')
+            Api.requestToken()
+                .then(res => {
+                    $('#authentication-modal').modal('hide')
+                    setApiToken(res.token)
+                    successCallback()
+                })
+                .catch(err => {
+                    $('#modal-message').html('Failed to request token: ' + err)
+                })
+		})
 }
 
 function displayChart(canvas, title, datapoints, unit, chartColor) {
