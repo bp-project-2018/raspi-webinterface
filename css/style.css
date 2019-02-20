@@ -1,5 +1,6 @@
 body {
 	font-family: sans-serif;
+	height:100%;
 }
 
 .content {
@@ -7,9 +8,10 @@ body {
 }
 
 .sidebar {
-	padding: 0;
+	padding: 0 1em 0 0;
 	background-color: #f6f6f6;
 	color: #121212;
+	overflow-y: auto;
 }
 
 .list-group-item {
@@ -19,10 +21,11 @@ body {
 
 #sensor-menu-header {
 	margin: 1em 0 0.5em 0.5em;
+	font-size: 1.8em;
 }
 
-.version-info {
-	padding: 1em 1em 1em 2em;
+#version-info {
+	padding: 2em 1em 1em 2em;
 }
 
 .card {
@@ -35,4 +38,16 @@ body {
 
 .card-small {
 
+}
+
+.page-content {
+	height: 100vh;
+}
+
+#dashboard {
+	overflow-y: auto;
+}
+
+.custom-control-label {
+	display: block;
 }
