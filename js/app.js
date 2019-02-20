@@ -10,8 +10,7 @@ var ChartColors = [
 	'rgb(255, 205, 86)',
 	'rgb(75, 192, 192)',
 	'rgb(54, 162, 235)',
-	'rgb(153, 102, 255)',
-	'rgb(201, 203, 207)'
+	'rgb(153, 102, 255)'
 ]
 
 function randomColor() {
@@ -39,7 +38,7 @@ function setApiToken(token) {
 function getMeasurementTitle(device, sensor) {
 	var titleId = `${device.id}$${sensor.id}`
 	var stored = Model.titles[titleId]
-	var suggested = `${device.id} ${sensor.type}-${sensor.id}`
+	var suggested = `${device.id} ${sensor.type} ${sensor.id}`
 	return stored || suggested
 }
 
@@ -106,7 +105,7 @@ function loadData(device, sensor) {
 	var begin = new Date()
 	begin.setHours(begin.getHours() - 1)
 	var end = new Date()
-	var resolutionSeconds = 1
+	var resolutionSeconds = (end - begin) / 60000
 	Api.queryData(device.id, sensor.id, begin, end, resolutionSeconds)
 		.then(res => {
 			var canvas = $('#canvas')
@@ -118,6 +117,16 @@ function loadData(device, sensor) {
 		.catch(err => {
 			console.log(err)
 		})
+}
+
+function displayDateRelativeToNow(date) {
+	var now = new Date()
+	var delta = Math.floor((now - date) / 1000)
+	if (delta < 60) return `-${delta}s`
+	if (delta < 3600) return `-${Math.floor(delta/60)}min`
+	if (delta < 86400) return `-${Math.floor(delta/3600)}h`
+	if (delta < 31536000) return `-${Math.floor(delta/86400)}d`
+	return `-${Math.floor(delta/31536000*10)/10}y`
 }
 
 function displayChart(canvas, title, datapoints, unit) {
@@ -143,20 +152,22 @@ function displayChart(canvas, title, datapoints, unit) {
 			legend: {
 				display: false
 			},
+			tooltips: {
+				enabled: false
+			},
 			scales: {
 				xAxes: [{
 					type: 'time',
 					time: {
 						parser: 'YYYY-MM-DDTHH:mm:ssZ',
-						unit: 'time',
-						displayFormats: {
-							time: 'MM-DD HH:mm:ss'
-						}
+						unit: 'time'
 					},
 					ticks: {
 						source: 'data',
 						autoSkip: true,
-						maxTicksLimit: 5
+						maxTicksLimit: 4,
+						maxRotation: 0,
+						callback: value => displayDateRelativeToNow(new Date(value))
 					}
 				}],
 				yAxes: [{
@@ -172,7 +183,10 @@ function displayChart(canvas, title, datapoints, unit) {
 			}
 		}
 	}
+	var oldChart = canvas.data('chart')
+	if (oldChart) oldChart.destroy()
 	var ctx = canvas.get(0).getContext('2d')
 	var chart = new Chart(ctx, config)
+	canvas.data('chart', chart)
 	return chart
 }
