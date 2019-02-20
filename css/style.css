@@ -8,8 +8,8 @@ body {
 
 .sidebar {
 	padding: 0;
-	/*background-color: #363636;
-	color: #f0f0f0;*/
+	background-color: #f6f6f6;
+	color: #121212;
 }
 
 .list-group-item {
@@ -23,4 +23,16 @@ body {
 
 .version-info {
 	padding: 1em 1em 1em 2em;
+}
+
+.card {
+	min-width: 10em;
+}
+
+.card-big {
+	min-width: 30em;
+}
+
+.card-small {
+
 }
