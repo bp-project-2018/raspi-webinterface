@@ -20,7 +20,8 @@ function randomColor() {
 function loadModel() {
 	var json = localStorage.getItem('iot-bp-model')
 	if (!json) return null
-	window.Model = JSON.parse(json)
+    window.Model = JSON.parse(json)
+    Api.setToken(Model.token)
 }
 
 function saveModel() {
@@ -48,77 +49,6 @@ function setMeasurementTitle(device, sensor, title) {
 	saveModel()
 }
 
-$(function() {
-	loadModel()
-	if (Model.token) {
-		Api.setToken(Model.token)
-		$('#tokenSpan').html(Model.token + ' (from localstorage)')
-	}
-})
-
-$('#getStatus').click(function() {
-	Api.getStatus()
-		.then(res => {
-			$('#statusSpan').html("Okay")
-		})
-		.catch(err => {
-			$('#statusSpan').html(err)
-		})
-})
-
-$('#clearToken').click(function() {
-	setApiToken('')
-})
-
-$('#getToken').click(function() {
-	Api.requestToken()
-		.then(res => {
-			setApiToken(res.token)
-		})
-		.catch(err => {
-			$('#tokenSpan').html(err)
-		})
-})
-
-$('#getDevices').click(function() {
-	var list = $('#devicesList').empty()
-	Api.getDevices()
-		.then(res => {
-			Model.devices = res.devices
-			for (var device of res.devices) {
-				var sensorList = $('<ul></ul>')
-				for (var sensor of device.sensors) {
-					sensorList.append(`<li>${getMeasurementTitle(device, sensor)}</li>`).click(_ => loadData(device, sensor))
-				}
-				var item = $(`<li><b>${device.id}</b> with ${JSON.stringify(device.sensors.length)} sensors</li>`)
-				item.append(sensorList)
-				list.append(item)
-			}
-		})
-		.catch(err => {
-			list.append(`<li>Error: ${err}</li>`)
-		})
-})
-
-function loadData(device, sensor) {
-	var measurementTitle = getMeasurementTitle(device, sensor)
-	var begin = new Date()
-	begin.setHours(begin.getHours() - 1)
-	var end = new Date()
-	var resolutionSeconds = (end - begin) / 60000
-	Api.queryData(device.id, sensor.id, begin, end, resolutionSeconds)
-		.then(res => {
-			var canvas = $('#canvas')
-			var unit = sensor.unit
-			var title = measurementTitle
-			var normalized = res.datapoints.map(data => ({ x: data[0], y: data[1] }))
-			displayChart(canvas, title, normalized, unit)
-		})
-		.catch(err => {
-			console.log(err)
-		})
-}
-
 function displayDateRelativeToNow(date) {
 	var now = new Date()
 	var delta = Math.floor((now - date) / 1000)
@@ -129,13 +59,18 @@ function displayDateRelativeToNow(date) {
 	return `-${Math.floor(delta/31536000*10)/10}y`
 }
 
-function displayChart(canvas, title, datapoints, unit) {
+function ensureConnection(callback) {
+    // TODO
+    callback()
+}
+
+function displayChart(canvas, title, datapoints, unit, chartColor) {
 	var config = {
 		type: 'line',
 		data: {
 			datasets: [{
 				data: datapoints,
-				borderColor: randomColor(),
+				borderColor: chartColor,
 				backgroundColor: 'rgba(0, 0, 0, 0)',
 				fill: true,
 			}]
@@ -190,3 +125,78 @@ function displayChart(canvas, title, datapoints, unit) {
 	canvas.data('chart', chart)
 	return chart
 }
+
+function loadCards() {
+    var list = $('#main-cards').empty()
+	Api.getDevices()
+		.then(res => {
+			Model.devices = res.devices
+			for (var device of res.devices) {
+				for (var sensor of device.sensors) {
+					list.append(`<div class="card my-3 card-big">
+                                    <div class="card-body" deviceId="${device.id}" sensorId="${sensor.id}" chartColor="${randomColor()}">
+                                        <h4 class="card-title" contenteditable="true">${getMeasurementTitle(device, sensor)}</h4>
+                                        <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+                                        <canvas></canvas>
+                                    </div>
+                                </div>`)
+				}
+            }
+            updateAllCanvas()
+		})
+		.catch(err => {
+			console.log(err)
+        })
+}
+
+function updateAllCanvas() {
+    $('canvas').each(function() {
+        var canvas = $(this)
+        var body = canvas.parent()
+        var deviceId = body.attr('deviceId')
+        var sensorId = body.attr('sensorId')
+        var chartColor = body.attr('chartColor')
+        var device = Model.devices.filter(x => x.id == deviceId)[0]
+        var sensor = device.sensors.filter(x => x.id == sensorId)[0]
+        var measurementTitle = getMeasurementTitle(device, sensor)
+        var begin = new Date()
+        begin.setHours(begin.getHours() - 1)
+        var end = new Date()
+        var resolutionSeconds = (end - begin) / 60000
+        Api.queryData(device.id, sensor.id, begin, end, resolutionSeconds)
+            .then(res => {
+                var unit = sensor.unit
+                var title = measurementTitle
+                var normalized = res.datapoints.map(data => ({ x: data[0], y: data[1] }))
+                displayChart(canvas, title, normalized, unit, chartColor)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+}
+
+function cardTitleUpdated() {
+    var element = $(this)
+    var title = element.text()
+    var body = element.parent()
+    var deviceId = body.attr('deviceId')
+    var sensorId = body.attr('sensorId')
+    var device = Model.devices.filter(x => x.id == deviceId)[0]
+    var sensor = device.sensors.filter(x => x.id == sensorId)[0]
+    setMeasurementTitle(device, sensor, title)
+    updateAllCanvas()
+}
+
+function bindEvents() {
+    $(document).on('blur', '.card-title', cardTitleUpdated);
+}
+
+$(function() {
+    loadModel()
+    ensureConnection(_ => {
+        loadCards()
+        bindEvents()
+        setInterval(updateAllCanvas, 5000)
+    })
+})
