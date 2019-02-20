@@ -8,7 +8,7 @@ body {
 }
 
 .sidebar {
-	padding: 0 1em 0 0;
+	padding: 0;
 	background-color: #f6f6f6;
 	color: #121212;
 	overflow-y: auto;
@@ -17,11 +17,13 @@ body {
 .list-group-item {
 	border: none;
 	background-color: transparent;
+    padding-right: 1em;
 }
 
 #sensor-menu-header {
 	margin: 1em 0 0.5em 0.5em;
 	font-size: 1.8em;
+    padding-right: 0.5em;
 }
 
 #version-info {
