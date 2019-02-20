@@ -1,9 +1,3 @@
-var Model = {
-	token: '',
-	devices: [],
-	titles: {}
-}
-
 var ChartColors = [
 	'rgb(255, 99, 132)',
 	'rgb(255, 159, 64)',
@@ -21,6 +15,13 @@ function loadModel() {
 	var json = localStorage.getItem('iot-bp-model')
 	if (!json) return null
     window.Model = JSON.parse(json)
+   
+    window.Model = window.Model || {}
+    Model.token = Model.token || ''
+    Model.devices = Model.devices || []
+    Model.titles = Model.titles || {}
+    Model.disabled = Model.disabled || {}
+
     Api.setToken(Model.token)
 }
 
@@ -33,20 +34,21 @@ function setApiToken(token) {
 	Model.token = token
 	Api.setToken(token)
 	saveModel()
-	$('#tokenSpan').html(Model.token || '???')
 }
 
 function getMeasurementTitle(device, sensor) {
-	var titleId = `${device.id}$${sensor.id}`
+	var titleId = `${device.id}/${sensor.id}`
 	var stored = Model.titles[titleId]
 	var suggested = `${device.id} ${sensor.type} ${sensor.id}`
 	return stored || suggested
 }
 
 function setMeasurementTitle(device, sensor, title) {
-	var titleId = `${device.id}$${sensor.id}`
+	var titleId = `${device.id}/${sensor.id}`
 	Model.titles[titleId] = title
-	saveModel()
+    $(`label[deviceId=${device.id}][sensorId=${sensor.id}] .titlespan`).html(title)
+    updateAllCanvas()
+    saveModel()
 }
 
 function displayDateRelativeToNow(date) {
@@ -126,20 +128,43 @@ function displayChart(canvas, title, datapoints, unit, chartColor) {
 	return chart
 }
 
+function isSensorDisabled(device, sensor) {
+    return Model.disabled[`${device.id}/${sensor.id}`] || false
+}
+
+function setSensorDisabled(device, sensor, disabled) {
+    Model.disabled[`${device.id}/${sensor.id}`] = disabled
+    var card = $(`.card[deviceId=${device.id}][sensorId=${sensor.id}]`)
+    if (disabled) card.hide()
+    else card.show()
+    saveModel()
+}
+
 function loadCards() {
-    var list = $('#main-cards').empty()
+    var cards = $('#main-cards').empty()
+	var menu = $('#menu-list').empty()
 	Api.getDevices()
 		.then(res => {
 			Model.devices = res.devices
 			for (var device of res.devices) {
 				for (var sensor of device.sensors) {
-					list.append(`<div class="card my-3 card-big">
-                                    <div class="card-body" deviceId="${device.id}" sensorId="${sensor.id}" chartColor="${randomColor()}">
+                    var disabled = isSensorDisabled(device, sensor)
+                    var card = $(`<div class="card my-3 card-big" deviceId="${device.id}" sensorId="${sensor.id}" chartColor="${randomColor()}">
+                                    <div class="card-body">
                                         <h4 class="card-title" contenteditable="true">${getMeasurementTitle(device, sensor)}</h4>
                                         <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
                                         <canvas></canvas>
                                     </div>
                                 </div>`)
+                    var label = $(`<label class="list-group-item list-group-item-action" deviceId="${device.id}" sensorId="${sensor.id}">
+                                        <span class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input hidebox" ${disabled ? '' : 'checked'}>
+                                            <span class="custom-control-label titlespan">${getMeasurementTitle(device, sensor)}</span>
+                                        </span>
+                                    </label>`)
+                    menu.append(label)
+                    cards.append(card)
+                    if (disabled) card.hide()
 				}
             }
             updateAllCanvas()
@@ -152,17 +177,17 @@ function loadCards() {
 function updateAllCanvas() {
     $('canvas').each(function() {
         var canvas = $(this)
-        var body = canvas.parent()
-        var deviceId = body.attr('deviceId')
-        var sensorId = body.attr('sensorId')
-        var chartColor = body.attr('chartColor')
+        var card = canvas.parent().parent()
+        var deviceId = card.attr('deviceId')
+        var sensorId = card.attr('sensorId')
+        var chartColor = card.attr('chartColor')
         var device = Model.devices.filter(x => x.id == deviceId)[0]
         var sensor = device.sensors.filter(x => x.id == sensorId)[0]
         var measurementTitle = getMeasurementTitle(device, sensor)
         var begin = new Date()
         begin.setHours(begin.getHours() - 1)
         var end = new Date()
-        var resolutionSeconds = (end - begin) / 60000
+        var resolutionSeconds = Math.floor((end - begin) / 60000)
         Api.queryData(device.id, sensor.id, begin, end, resolutionSeconds)
             .then(res => {
                 var unit = sensor.unit
@@ -179,17 +204,28 @@ function updateAllCanvas() {
 function cardTitleUpdated() {
     var element = $(this)
     var title = element.text()
-    var body = element.parent()
-    var deviceId = body.attr('deviceId')
-    var sensorId = body.attr('sensorId')
+    var card = element.parent().parent()
+    var deviceId = card.attr('deviceId')
+    var sensorId = card.attr('sensorId')
     var device = Model.devices.filter(x => x.id == deviceId)[0]
     var sensor = device.sensors.filter(x => x.id == sensorId)[0]
     setMeasurementTitle(device, sensor, title)
-    updateAllCanvas()
+}
+
+function hideBoxChanged() {
+    var element = $(this)
+    var value = !element.is(':checked')
+    var card = element.parent().parent()
+    var deviceId = card.attr('deviceId')
+    var sensorId = card.attr('sensorId')
+    var device = Model.devices.filter(x => x.id == deviceId)[0]
+    var sensor = device.sensors.filter(x => x.id == sensorId)[0]
+    setSensorDisabled(device, sensor, value)
 }
 
 function bindEvents() {
     $(document).on('blur', '.card-title', cardTitleUpdated);
+    $(document).on('change', '.hidebox', hideBoxChanged)
 }
 
 $(function() {
