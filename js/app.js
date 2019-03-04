@@ -19,6 +19,7 @@ function loadModel() {
     Model.token = Model.token || ''
     Model.devices = Model.devices || []
     Model.titles = Model.titles || {}
+    Model.sorting = Model.sorting || {}
     Model.disabled = Model.disabled || {}
 
     Api.setToken(Model.token)
@@ -37,22 +38,32 @@ function setApiToken(token) {
 
 function getMeasurementTitle(device, sensor) {
 	var titleId = `${device.id}/${sensor.id}`
-	var stored = Model.titles[titleId]
-	var suggested = `${device.id} ${sensor.type} ${sensor.id}`
-	return stored || suggested
+	if (titleId in Model.titles) return Model.titles[titleId]
+	else return `${device.id} ${sensor.type} ${sensor.id}`
 }
 
 function setMeasurementTitle(device, sensor, title) {
 	var titleId = `${device.id}/${sensor.id}`
 	Model.titles[titleId] = title
     $(`label[deviceId=${device.id}][sensorId=${sensor.id}] .titlespan`).html(title)
-    updateAllCanvas()
+    saveModel()
+}
+
+function getMeasurementSorting(device, sensor) {
+	var sortingId = `${device.id}/${sensor.id}`
+	if (sortingId in Model.sorting) return Model.sorting[sortingId]
+	else return -(new Date(sensor.discoveredAt).getTime())
+}
+
+function setMeasurementSorting(device, sensor, sorting) {
+	var sortingId = `${device.id}/${sensor.id}`
+	Model.sorting[sortingId] = sorting
     saveModel()
 }
 
 function displayDateRelativeToNow(date) {
 	var now = new Date()
-	var delta = Math.floor((now - date) / 1000)
+	var delta = Math.floor((now - date)/1000)
 	if (delta < 60) return `-${delta}s`
 	if (delta < 3600) return `-${Math.floor(delta/60)}min`
 	if (delta < 86400) return `-${Math.floor(delta/3600)}h`
@@ -72,12 +83,13 @@ function ensureConnection(successCallback) {
                     successCallback()
                 })
                 .catch(err => {
-                    $('#modal-message').html('Failed to request token: ' + err)
+					err = err.statusText || err
+                    $('#modal-message').html('Failed to request token from device: ' + err)
                 })
 		})
 }
 
-function displayChart(canvas, title, datapoints, unit, chartColor) {
+function displayChart(canvas, datapoints, unit, chartColor) {
 	var config = {
 		type: 'line',
 		data: {
@@ -93,16 +105,9 @@ function displayChart(canvas, title, datapoints, unit, chartColor) {
 			spanGaps: true,
 			elements: { point: { radius: 0 } },
 			responsive: true,
-			title: {
-				display: true,
-				text: title
-			},
-			legend: {
-				display: false
-			},
-			tooltips: {
-				enabled: false
-			},
+			title: { display: false },
+			legend: { display: false },
+			tooltips: { enabled: false },
 			scales: {
 				xAxes: [{
 					type: 'time',
@@ -124,15 +129,13 @@ function displayChart(canvas, title, datapoints, unit, chartColor) {
 						display: true,
 						labelString: unit
 					},
-					ticks: {
-						beginAtZero: true
-					}
+					ticks: { beginAtZero: true }
 				}]
 			}
 		}
 	}
-	var oldChart = canvas.data('chart')
-	if (oldChart) oldChart.destroy()
+	var old = canvas.data('chart')
+	if (old) old.destroy()
 	var ctx = canvas.get(0).getContext('2d')
 	var chart = new Chart(ctx, config)
 	canvas.data('chart', chart)
@@ -152,59 +155,77 @@ function setSensorDisabled(device, sensor, disabled) {
 }
 
 function loadCards() {
-    var cards = $('#main-cards').empty()
-	var menu = $('#menu-list').empty()
-	Api.getDevices()
+    Api.getDevices()
 		.then(res => {
 			Model.devices = res.devices
-			for (var device of res.devices) {
-				for (var sensor of device.sensors) {
-                    var disabled = isSensorDisabled(device, sensor)
-                    var card = $(`<div class="card my-3 card-big" deviceId="${device.id}" sensorId="${sensor.id}" chartColor="${randomColor()}">
-                                    <div class="card-body">
-                                        <h4 class="card-title" contenteditable="true">${getMeasurementTitle(device, sensor)}</h4>
-                                        <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-                                        <canvas></canvas>
-                                    </div>
-                                </div>`)
-                    var label = $(`<label class="list-group-item list-group-item-action" deviceId="${device.id}" sensorId="${sensor.id}">
-                                        <span class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input hidebox" ${disabled ? '' : 'checked'}>
-                                            <span class="custom-control-label titlespan">${getMeasurementTitle(device, sensor)}</span>
-                                        </span>
-                                    </label>`)
-                    menu.append(label)
-                    cards.append(card)
-                    if (disabled) card.hide()
-				}
-            }
-            updateAllCanvas()
+			renderSensors()
+            saveModel()
 		})
 		.catch(err => {
 			console.log(err)
         })
 }
 
+function renderSensors() {
+	var cards = $('#main-cards').empty()
+	var labels = $('#menu-list').empty()
+	for (var device of Model.devices) {
+		for (var sensor of device.sensors) {
+			var title = getMeasurementTitle(device, sensor)
+			var sorting = getMeasurementSorting(device, sensor)
+			var disabled = isSensorDisabled(device, sensor)
+			var card = $(`<div class="card my-3 card-big" deviceId="${device.id}" sensorId="${sensor.id}" chartColor="${randomColor()}" sorting="${sorting}">
+							<div class="card-body">
+								<h4 class="card-title" contenteditable="true">${title}</h4>
+								<p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+								<canvas></canvas>
+							</div>
+						</div>`)
+			var label = $(`<label class="list-group-item list-group-item-action" deviceId="${device.id}" sensorId="${sensor.id}" sorting="${sorting}">
+								<span class="custom-control custom-checkbox">
+									<input type="checkbox" class="custom-control-input hidebox" ${disabled ? '' : 'checked'}>
+									<span class="custom-control-label titlespan">${title}</span>
+								</span>
+							</label>`)
+			labels.append(label)
+			cards.append(card)
+			if (disabled) card.hide()
+		}
+	}
+	sortElements()
+	updateAllCanvas()
+}
+
+function sortElements() {
+	var comparator = function (a, b) {
+		var x = parseInt($(a).attr('sorting'))
+		var y = parseInt($(b).attr('sorting'))
+		return (x < y) ? -1 : (x > y) ? 1 : 0
+	}
+	var labels = $('#menu-list')
+	labels.append(labels.children().sort(comparator))
+	var cards = $('#main-cards')
+	cards.append(cards.children().sort(comparator))
+}
+
 function updateAllCanvas() {
-    $('canvas').each(function() {
-        var canvas = $(this)
+    $('canvas').each(function(i, element) {
+        var canvas = $(element)
         var card = canvas.parent().parent()
         var deviceId = card.attr('deviceId')
         var sensorId = card.attr('sensorId')
         var chartColor = card.attr('chartColor')
         var device = Model.devices.filter(x => x.id == deviceId)[0]
         var sensor = device.sensors.filter(x => x.id == sensorId)[0]
-        var measurementTitle = getMeasurementTitle(device, sensor)
         var begin = new Date()
         begin.setHours(begin.getHours() - 1)
         var end = new Date()
         var resolutionSeconds = Math.floor((end - begin) / 60000)
         Api.queryData(device.id, sensor.id, begin, end, resolutionSeconds)
             .then(res => {
-                var unit = sensor.unit
-                var title = measurementTitle
+				res.datapoints = res.datapoints || []
                 var normalized = res.datapoints.map(data => ({ x: data[0], y: data[1] }))
-                displayChart(canvas, title, normalized, unit, chartColor)
+                displayChart(canvas, normalized, sensor.unit, chartColor)
             })
             .catch(err => {
                 console.log(err)
@@ -234,13 +255,30 @@ function hideBoxChanged() {
     setSensorDisabled(device, sensor, value)
 }
 
+function onElementReSorted (event, ui) {
+	ui.item.parent().children().each(function(i, element) {
+		var label = $(element)
+		var deviceId = label.attr('deviceId')
+        var sensorId = label.attr('sensorId')
+		var device = Model.devices.filter(x => x.id == deviceId)[0]
+    	var sensor = device.sensors.filter(x => x.id == sensorId)[0]
+		setMeasurementSorting(device, sensor, i)
+		$(`div[deviceId=${device.id}][sensorId=${sensor.id}]`).attr('sorting', i)
+		$(`label[deviceId=${device.id}][sensorId=${sensor.id}]`).attr('sorting', i)
+	})
+	sortElements()
+}
+
 function bindEvents() {
     $(document).on('blur', '.card-title', cardTitleUpdated);
     $(document).on('change', '.hidebox', hideBoxChanged)
 }
 
 $(function() {
-    loadModel()
+	$('#menu-list').sortable({ update: onElementReSorted });
+	//enabling drag 'n drop on the cards bricks the re-naming
+	//$('#main-cards').sortable({ update: onElementReSorted });
+	loadModel()
     ensureConnection(_ => {
         loadCards()
         bindEvents()
