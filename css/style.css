@@ -1,55 +1,200 @@
 body {
-	font-family: sans-serif;
-	height:100%;
+    font-family: sans-serif;
+    height: 100%;
 }
 
 .content {
-	margin: 2em;
+    margin: 2em;
 }
 
-.sidebar {
-	padding: 0;
-	background-color: #f6f6f6;
-	color: #121212;
-	overflow-y: auto;
+#sidebar {
+    padding: 0;
+    background-color: #323232;
+    overflow-y: auto;
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    transition: transform 0.5s;
+    z-index: 1;
+    color: #e2e2e2;
+}
+
+#sidebar .custom-control-label {
+    color: #e2e2e2;
+}
+
+#sidebar .list-group-item:hover .custom-control-label {
+    color: white;
+}
+
+.custom-control-label:before {
+    background-color: #494949;
 }
 
 .list-group-item {
-	border: none;
-	background-color: transparent;
+    border: none;
+    background-color: transparent;
     padding-right: 1em;
 }
 
+.list-group-item:hover {
+    background-color: #3c3c3c;
+    cursor: pointer;
+}
+
 #sensor-menu-header {
-	margin: 1em 0 0.5em 0.5em;
-	font-size: 1.8em;
+    margin: 1em 0 0.5em 0.5em;
+    font-size: 1.8em;
     padding-right: 0.5em;
 }
 
 #version-info {
-	padding: 2em 1em 1em 2em;
+    padding: 2em 1em 1em 2em;
+    color: #9d9d9d;
 }
 
 .card {
-	min-width: 10em;
+    position: relative;
+    min-width: 10em;
+}
+
+.diagram-switch {
+    height: 1.7em;
+    width: 1.7em;
+    padding: 0.2em;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 1em 1em 0 0;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default input checkbox */
+.diagram-switch input {
+    display: none;
+}
+
+.diagram-switch:hover {
+    cursor: pointer;
+}
+
+.diagram-switch:hover .checkmark-icon {
+    opacity: 0.9;
+}
+
+.checkmark-icon {
+    content: url("../icons/glyph/si-glyph-chart-decrease.svg");
+    opacity: 0.3;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.diagram-switch input:checked~.checkmark-icon {
+    opacity: 0.9;
+}
+
+.diagram-switch input:checked~.checkmark-icon::before {
+    /* TODO */
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    content: "";
+    height: 1.7em;
+    width: 1.7em;
+    background: #808080;
+    border: solid gray 1em;
 }
 
 .card-big {
-	min-width: 30em;
+    min-width: 30em;
 }
 
 .card-small {
 
 }
 
+.card-big .card-title {
+    margin-right: 5em;
+}
+
+.card-title {
+    position: relative;
+    margin-right: 1em;
+}
+
+.card-title::after {
+    position: absolute;
+    content: url("../icons/glyph/si-glyph-pencil.svg");
+    display: inline-block;
+    margin-left: 0.4em;
+    height: 0.9em;
+    width: 0.9em;
+    opacity: 0;
+
+    transition: all 0.2s;
+}
+
+.card-title:hover::after {
+    opacity: 0.7;
+}
+
 .page-content {
-	height: 100vh;
+    height: 100vh;
 }
 
 #dashboard {
-	overflow-y: auto;
+    overflow-y: auto;
 }
 
 .custom-control-label {
-	display: block;
+    display: block;
+}
+
+.icon {
+    height: 1.6em;
+    width: 1.6em;
+}
+
+.icon-dark {
+    fill: #9d9d9d;
+}
+
+.icon-dark:hover {
+    fill: #ffffff;
+}
+
+#close-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.dropdown-menu {
+    background: #1b1e21;
+}
+
+.dropdown-item {
+    color: #e2e2e2;
+}
+
+.dropdown-item:hover {
+    color: white;
+    background: #313639;
+}
+
+/* for large displays (Bootstrap "lg") */
+@media (min-width: 992px) {
+    #sidebar {
+        position: relative;
+        right: 0;
+        width: auto;
+        transition: 0s;
+    }
 }

@@ -61,6 +61,7 @@ function displayDateRelativeToNow(date) {
 }
 
 function ensureConnection(successCallback) {
+	/*
     Api.getStatus()
 		.then(successCallback)
 		.catch(err => {
@@ -74,7 +75,7 @@ function ensureConnection(successCallback) {
                 .catch(err => {
                     $('#modal-message').html('Failed to request token: ' + err)
                 })
-		})
+		})*/
 }
 
 function displayChart(canvas, title, datapoints, unit, chartColor) {
@@ -247,3 +248,18 @@ $(function() {
         setInterval(updateAllCanvas, 5000)
     })
 })
+
+function openSidebar() {
+	document.getElementById("sidebar").style.transform = "translateX(-300px)";
+}
+
+function closeSidebar() {
+	document.getElementById("sidebar").style.transform = "translateX(0px)";
+}
+
+$(window).resize(function () {
+	if (window.matchMedia('screen and (min-width:992px)').matches) {
+		closeSidebar();	// reset sidebar to avoid invisible sidebar
+		console.log("closing sidebar")
+	}
+});
