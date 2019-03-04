@@ -160,6 +160,13 @@
                 <a class="btn btn-primary btn-lg d-lg-none">
                     <span class="glyphicon glyphicon-menu-hamburger"></span> <span class="d-none d-md-block">Sensor Menu</span>
                 </a>
+                <select id="timespanSelector">
+                    <option value="[-60*1,0]">last minute</option>
+                    <option value="[-60*60,0]">last hour</option>
+                    <option value="[-60*60*24,0]">last day</option>
+                    <option value="[-60*60*24*30,0]">last month</option>
+                    <option value="[-60*60*24*365,0]">last year</option>
+                </select>
             </div>
 
             <div class="card-deck" id="main-cards">

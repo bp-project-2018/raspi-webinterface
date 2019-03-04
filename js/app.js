@@ -20,8 +20,10 @@ function loadModel() {
     Model.devices = Model.devices || []
     Model.titles = Model.titles || {}
     Model.sorting = Model.sorting || {}
-    Model.disabled = Model.disabled || {}
-
+	Model.disabled = Model.disabled || {}
+	Model.timespan = Model.timespan || [-60*60,0]
+	Model.timespanStr = Model.timespanStr || '[-60*60,0]'
+	
     Api.setToken(Model.token)
 }
 
@@ -58,7 +60,7 @@ function getMeasurementSorting(device, sensor) {
 function setMeasurementSorting(device, sensor, sorting) {
 	var sortingId = `${device.id}/${sensor.id}`
 	Model.sorting[sortingId] = sorting
-    saveModel()
+	// saveModel() has to be invoked by the caller himself for performance reasons on bulk sets
 }
 
 function displayDateRelativeToNow(date) {
@@ -217,11 +219,10 @@ function updateAllCanvas() {
         var chartColor = card.attr('chartColor')
         var device = Model.devices.filter(x => x.id == deviceId)[0]
         var sensor = device.sensors.filter(x => x.id == sensorId)[0]
-        var begin = new Date()
-        begin.setHours(begin.getHours() - 1)
-        var end = new Date()
-        var resolutionSeconds = Math.floor((end - begin) / 60000)
-        Api.queryData(device.id, sensor.id, begin, end, resolutionSeconds)
+        var relativeBegin = Model.timespan[0]
+        var relativeEnd = Model.timespan[1]
+        var resolutionSeconds = Math.floor((relativeEnd - relativeBegin) / 60000)
+        Api.queryDataRelative(device.id, sensor.id, relativeBegin, relativeEnd, resolutionSeconds)
             .then(res => {
 				res.datapoints = res.datapoints || []
                 var normalized = res.datapoints.map(data => ({ x: data[0], y: data[1] }))
@@ -267,11 +268,21 @@ function onElementReSorted (event, ui) {
 		$(`label[deviceId=${device.id}][sensorId=${sensor.id}]`).attr('sorting', i)
 	})
 	sortElements()
+	saveModel()
+}
+
+function timespanChanged() {
+	var selector = $('#timespanSelector')
+	Model.timespanStr = selector.val()
+	Model.timespan = eval(Model.timespanStr)
+	updateAllCanvas()
+	saveModel()
 }
 
 function bindEvents() {
     $(document).on('blur', '.card-title', cardTitleUpdated);
-    $(document).on('change', '.hidebox', hideBoxChanged)
+	$(document).on('change', '.hidebox', hideBoxChanged)
+	$(document).on('change', '#timespanSelector', timespanChanged)
 }
 
 $(function() {
@@ -280,8 +291,9 @@ $(function() {
 	//$('#main-cards').sortable({ update: onElementReSorted });
 	loadModel()
     ensureConnection(_ => {
-        loadCards()
+		loadCards()
         bindEvents()
-        setInterval(updateAllCanvas, 5000)
+		setInterval(updateAllCanvas, 5000)
+		$('#timespanSelector').val(Model.timespanStr)
     })
 })
