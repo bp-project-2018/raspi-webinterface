@@ -50,7 +50,11 @@ var Api = {
 	},
 
 	queryData: function (deviceId, measurementId, beginDate, endDate, resolutionSeconds) {
-		return Api.post('/api/queryData', { DeviceID: deviceId, SensorID: measurementId, BeginUnix: Math.floor(beginDate.getTime()/1000), EndUnix: Math.floor(endDate.getTime()/1000), ResolutionSeconds: Math.floor(resolutionSeconds) })
+		return Api.post('/api/queryData', { deviceID: deviceId, sensorID: measurementId, beginUnix: Math.floor(beginDate.getTime()/1000), endUnix: Math.floor(endDate.getTime()/1000), resolutionSeconds: Math.floor(resolutionSeconds) })
+	},
+
+	queryDataRelative: function (deviceId, measurementId, beginRelativeSeconds, endRelativeSeconds, resolutionSeconds) {
+		return Api.post('/api/queryDataRelative', { deviceID: deviceId, sensorID: measurementId, beginRelativeSeconds: Math.floor(beginRelativeSeconds), endRelativeSeconds: Math.floor(endRelativeSeconds), resolutionSeconds: Math.floor(resolutionSeconds) })
 	}
 
 }
