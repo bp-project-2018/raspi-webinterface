@@ -2,7 +2,7 @@ var Api = {
 
 	token: null,
 	timeout: 30000,
-	enpoint: '',
+	enpoint: 'http://kronos.local',
 
 	setToken: function(token) {
 		Api.token = token

@@ -74,6 +74,7 @@ function displayDateRelativeToNow(date) {
 }
 
 function ensureConnection(successCallback) {
+	/*
     Api.getStatus()
 		.then(successCallback)
 		.catch(err => {
@@ -88,7 +89,7 @@ function ensureConnection(successCallback) {
 					err = err.statusText || err
                     $('#modal-message').html('Failed to request token from device: ' + err)
                 })
-		})
+		})*/
 }
 
 function displayChart(canvas, datapoints, unit, chartColor) {
@@ -295,4 +296,31 @@ $(function() {
 		setInterval(updateAllCanvas, 5000)
 		$('#timespanSelector').val(Model.timespanStr)
     })
+
+	// initialize tooltips (with delayed show)
+	$('[data-toggle="tooltip"]').tooltip({
+		animation: true,
+		delay: {show: 1000, hide: 100}
+	})
 })
+
+function openSidebar() {
+	document.getElementById("sidebar").style.transform = "translateX(-300px)";
+	$('#sidebar-shadow').fadeIn(500)
+}
+
+function closeSidebar() {
+	document.getElementById("sidebar").style.transform = "translateX(0px)";
+	$('#sidebar-shadow').fadeOut(500)
+}
+
+// bug prevention
+$(window).resize(function () {
+	if (window.matchMedia('screen and (min-width:992px)').matches) {
+		closeSidebar();	// reset sidebar to avoid invisible sidebar bugs
+	}
+});
+
+function openOptionsModal() {
+	$('#options-modal').modal('show');
+}

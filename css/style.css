@@ -1,55 +1,244 @@
 body {
-	font-family: sans-serif;
-	height:100%;
+    font-family: sans-serif;
+    height: 100%;
+    overflow-y: hidden;
+}
+
+/* To avoid silly right padding when modal is opened: */
+body.modal-open {
+    padding-right: 0 !important;
+}
+
+main {
+    background: #f3f3f3;
+}
+
+.open-modal {
+    padding-right: -16px;
 }
 
 .content {
-	margin: 2em;
+    margin: 2em;
 }
 
-.sidebar {
-	padding: 0;
-	background-color: #f6f6f6;
-	color: #121212;
-	overflow-y: auto;
+#sidebar {
+    padding: 0;
+    background-color: #323232;
+    overflow-y: auto;
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    max-width: 100%;
+    transition: transform 0.5s;
+    z-index: 2;
+    color: #e2e2e2;
+}
+
+#sidebar .custom-control-label {
+    color: #e2e2e2;
+}
+
+#sidebar .list-group-item:hover .custom-control-label {
+    color: white;
+}
+
+#sidebar-shadow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    opacity: 0.5;
+    z-index: 1;
+    display: none;
+}
+
+.custom-control-label:before {
+    background-color: #494949;
 }
 
 .list-group-item {
-	border: none;
-	background-color: transparent;
+    border: none;
+    background-color: transparent;
     padding-right: 1em;
 }
 
+.list-group-item:hover {
+    background-color: #3c3c3c;
+    cursor: pointer;
+}
+
 #sensor-menu-header {
-	margin: 1em 0 0.5em 0.5em;
-	font-size: 1.8em;
+    margin: 1em 0 0.5em 0.5em;
+    font-size: 1.8em;
     padding-right: 0.5em;
 }
 
 #version-info {
-	padding: 2em 1em 1em 2em;
+    padding: 2em 1em 1em 2em;
+    color: #9d9d9d;
 }
 
 .card {
-	min-width: 10em;
+    position: relative;
+    min-width: 10em;
 }
 
-.card-big {
-	min-width: 30em;
+.diagram-switch {
+    height: 1.7em;
+    width: 1.7em;
+    padding: 0.2em;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 1em 1em 0 0;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
-.card-small {
+/* Hide the browser's default input checkbox */
+.diagram-switch input {
+    display: none;
+}
 
+.diagram-switch:hover {
+    cursor: pointer;
+}
+
+.diagram-icon::before {
+    position: absolute;
+    left: -15%;
+    top: -15%;
+    content: "";
+    height: 130%;
+    width: 130%;
+    background: #000000;
+    border-radius: 50%;
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.diagram-switch:active .diagram-icon::before {
+    opacity: 0.1;
+}
+
+input:checked~.diagram-icon::before {
+    opacity: 0.05;
+}
+
+.diagram-icon::after {
+    content: url("../icons/ionicons/md-analytics.svg");
+    opacity: 0.3;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.diagram-switch:hover .diagram-icon::after {
+    opacity: 0.7;
+}
+
+input:checked~.diagram-icon::after {
+    opacity: 0.7;
+}
+
+.card {
+    overflow: hidden;
+}
+
+.card-title {
+    position: relative;
+    margin-right: 1.1em;
+}
+
+.card-title::after {
+    position: absolute;
+    content: url("../icons/glyph/si-glyph-pencil.svg");
+    display: inline-block;
+    margin-left: 0.4em;
+    height: 0.9em;
+    width: 0.9em;
+    opacity: 0;
+
+    transition: all 0.2s;
+}
+
+.card-title:hover {
+    cursor: text;
+}
+
+.card-title:focus {
+    /* TODO */
+    border-bottom: solid black 1px;
+}
+
+.card-title:hover::after {
+    opacity: 0.7;
 }
 
 .page-content {
-	height: 100vh;
+    height: 100vh;
 }
 
 #dashboard {
-	overflow-y: auto;
+    overflow-y: auto;
 }
 
 .custom-control-label {
-	display: block;
+    display: block;
+}
+
+.icon {
+    display: inline-block;
+    height: 1em;
+}
+
+.icon-dark {
+    fill: #9d9d9d;
+}
+
+.icon-dark:hover {
+    fill: #ffffff;
+}
+
+#close-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1.3em;
+}
+
+.dropdown-menu {
+    background: #1b1e21;
+}
+
+.dropdown-item {
+    color: #e2e2e2;
+}
+
+.dropdown-item:hover {
+    color: white;
+    background: #313639;
+}
+
+/* for small displays (Bootstrap "md") */
+@media (min-width: 576px) {
+    .card-big {
+        min-width: 30em;
+    }
+}
+
+/* for large displays (Bootstrap "lg") */
+@media (min-width: 992px) {
+    #sidebar {
+        position: relative;
+        right: 0;
+        width: auto;
+        transition: 0s;
+    }
 }
