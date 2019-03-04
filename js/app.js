@@ -247,19 +247,31 @@ $(function() {
         bindEvents()
         setInterval(updateAllCanvas, 5000)
     })
+
+	// initialize tooltips (with delayed show)
+	$('[data-toggle="tooltip"]').tooltip({
+		animation: true,
+		delay: {show: 1000, hide: 100}
+	})
 })
 
 function openSidebar() {
 	document.getElementById("sidebar").style.transform = "translateX(-300px)";
+	$('#sidebar-shadow').fadeIn(500)
 }
 
 function closeSidebar() {
 	document.getElementById("sidebar").style.transform = "translateX(0px)";
+	$('#sidebar-shadow').fadeOut(500)
 }
 
+// bug prevention
 $(window).resize(function () {
 	if (window.matchMedia('screen and (min-width:992px)').matches) {
-		closeSidebar();	// reset sidebar to avoid invisible sidebar
-		console.log("closing sidebar")
+		closeSidebar();	// reset sidebar to avoid invisible sidebar bugs
 	}
 });
+
+function openOptionsModal() {
+	$('#options-modal').modal('show');
+}

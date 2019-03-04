@@ -14,7 +14,7 @@
 <body spellcheck="false">
 <div class="container-fluid">
     <div class="row">
-        <nav class="col-lg-3 col-xl-2 page-content" id="sidebar"> <!-- d-none col-lg-2 d-lg-block -->
+        <nav class="col-lg-3 col-xl-2 page-content" id="sidebar">
             <div class="sidebar-sticky">
                 <h2 id="sensor-menu-header">Sensor Menu</h2>
                 <a id="close-btn" onclick="closeSidebar()">
@@ -24,27 +24,6 @@
                         <path d="M48 256c0 114.9 93.1 208 208 208s208-93.1 208-208S370.9 48 256 48 48 141.1 48 256zm244.5 0l-81.9-81.1c-7.5-7.5-7.5-19.8 0-27.3s19.8-7.5 27.3 0l95.4 95.7c7.3 7.3 7.5 19.1.6 26.6l-94 94.3c-3.8 3.8-8.7 5.7-13.7 5.7-4.9 0-9.9-1.9-13.6-5.6-7.5-7.5-7.6-19.7 0-27.3l79.9-81z"/>
                     </svg>
                 </a>
-
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Displayed Interval
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">10&nbsp;s</a>
-                        <a class="dropdown-item" href="#">30&nbsp;s</a>
-                        <a class="dropdown-item" href="#">1&nbsp;min</a>
-                        <a class="dropdown-item" href="#">5&nbsp;min</a>
-                        <a class="dropdown-item" href="#">10&nbsp;min</a>
-                        <a class="dropdown-item" href="#">30&nbsp;min</a>
-                        <a class="dropdown-item" href="#">1&nbsp;h</a>
-                        <a class="dropdown-item" href="#">6&nbsp;h</a>
-                        <a class="dropdown-item" href="#">12&nbsp;h</a>
-                        <a class="dropdown-item" href="#">1&nbsp;d</a>
-                        <a class="dropdown-item" href="#">2&nbsp;d</a>
-                        <a class="dropdown-item" href="#">7&nbsp;d</a>
-                    </div>
-                </div>
 
                 <div class="list-group list-group-flush" id="menu-list">
 
@@ -183,24 +162,41 @@
         </nav>
 
         <main role="main" class="ml-sm-auto col-lg-9 col-xl-10 px-4 page-content" id="dashboard">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h1">Dashboard</h1>
-                <a class="btn btn-primary btn-lg d-lg-none" onclick="openSidebar()">
-                    <svg class="icon d-sm-none" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <path d="M432 176H80c-8.8 0-16-7.2-16-16s7.2-16 16-16h352c8.8 0 16 7.2 16 16s-7.2 16-16 16zM432 272H80c-8.8 0-16-7.2-16-16s7.2-16 16-16h352c8.8 0 16 7.2 16 16s-7.2 16-16 16zM432 368H80c-8.8 0-16-7.2-16-16s7.2-16 16-16h352c8.8 0 16 7.2 16 16s-7.2 16-16 16z"/>
-                    </svg>
-
-                    <span class="d-none d-sm-block" style="color: white">Sensor Menu</span>
-                </a>
+            <div class="row align-items-center pt-3 pb-2">
+                <div class="col-12 col-sm-6 d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
+                    <h1 class="h1">Dashboard</h1>
+                </div>
+                <div class="col-12 col-sm-6 text-center text-sm-right">
+                    <a class="btn btn-secondary" type="button" id="options-button" onclick="openOptionsModal()"
+                       data-toggle="tooltip" data-placement="bottom" title="Open options">
+                        <svg class="si-glyph si-glyph-gear icon" viewBox="-2 -2 20 20" version="1.1"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <path d="M15.969,8.969 L15.969,7.011 L13.899,7.011 C13.747,6.104 13.392,5.266 12.88,4.546 L14.343,3.083 L12.929,1.669 L11.466,3.132 C10.746,2.619 9.909,2.265 9.001,2.111 L9.001,0.042 L7.001,0.042 L7.001,2.111 C6.093,2.264 5.256,2.619 4.536,3.132 L3.073,1.669 L1.688,3.053 L3.147,4.512 C2.622,5.24 2.256,6.088 2.101,7.011 L0.032,7.011 L0.032,8.969 L2.095,8.969 C2.243,9.893 2.601,10.744 3.121,11.476 L1.658,12.939 L3.072,14.353 L4.535,12.89 C5.255,13.403 6.092,13.757 7,13.911 L7,15.98 L9,15.98 L9,13.911 C9.922,13.755 10.771,13.391 11.499,12.865 L12.957,14.323 L14.342,12.939 L12.879,11.476 C13.398,10.745 13.757,9.893 13.905,8.969 L15.969,8.969 L15.969,8.969 Z M8.021,11.062 C6.319,11.062 4.938,9.681 4.938,7.979 C4.938,6.277 6.319,4.896 8.021,4.896 C9.723,4.896 11.104,6.277 11.104,7.979 C11.104,9.681 9.723,11.062 8.021,11.062 L8.021,11.062 Z"
+                                      fill="white" class="si-glyph-fill"></path>
+                            </g>
+                        </svg>
+                        <span class="d-none d-md-inline-block" style="color: white">Options</span>
+                    </a>
+                    <a class="btn btn-primary d-lg-none" onclick="openSidebar()"
+                       data-toggle="tooltip" data-placement="bottom" title="Open sensor menu">
+                        <svg class="icon" fill="white" xmlns="http://www.w3.org/2000/svg"
+                             viewBox="0 0 512 512">
+                            <path d="M432 176H80c-8.8 0-16-7.2-16-16s7.2-16 16-16h352c8.8 0 16 7.2 16 16s-7.2 16-16 16zM432 272H80c-8.8 0-16-7.2-16-16s7.2-16 16-16h352c8.8 0 16 7.2 16 16s-7.2 16-16 16zM432 368H80c-8.8 0-16-7.2-16-16s7.2-16 16-16h352c8.8 0 16 7.2 16 16s-7.2 16-16 16z"/>
+                        </svg>
+                        <span class="d-none d-md-inline-block" style="color: white">Sensor Menu</span>
+                    </a>
+                </div>
             </div>
 
             <div class="card-deck" id="main-cards">
                 <div class="card my-3 card-big">
                     <div class="card-body">
                         <h4 class="card-title">Temperature</h4>
-                        <label class="diagram-switch">
+                        <label class="diagram-switch" data-toggle="tooltip" data-placement="bottom"
+                               title="Diagram view on/off">
                             <input type="checkbox">
-                            <span class="checkmark-icon"></span>
+                            <span class="diagram-icon"></span>
                         </label>
                         <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam id dolor id
                             nibh ultricies vehicula ut id elit.</p>
@@ -209,9 +205,10 @@
                 <div class="card my-3 card-big">
                     <div class="card-body">
                         <h4 class="card-title">Humidity</h4>
-                        <label class="diagram-switch">
+                        <label class="diagram-switch" data-toggle="tooltip" data-placement="bottom"
+                               title="Diagram view on/off">
                             <input type="checkbox">
-                            <span class="checkmark-icon"></span>
+                            <span class="diagram-icon"></span>
                         </label>
                         <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
                         <canvas id="canvas"></canvas>
@@ -220,9 +217,10 @@
                 <div class="card my-3">
                     <div class="card-body">
                         <h4 class="card-title">Light</h4>
-                        <label class="diagram-switch">
+                        <label class="diagram-switch" data-toggle="tooltip" data-placement="bottom"
+                               title="Diagram view on/off">
                             <input type="checkbox">
-                            <span class="checkmark-icon"></span>
+                            <span class="diagram-icon"></span>
                         </label>
                         <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
                     </div>
@@ -230,9 +228,10 @@
                 <div class="card my-3">
                     <div class="card-body">
                         <h4 class="card-title">Button</h4>
-                        <label class="diagram-switch">
+                        <label class="diagram-switch" data-toggle="tooltip" data-placement="bottom"
+                               title="Diagram view on/off">
                             <input type="checkbox">
-                            <span class="checkmark-icon"></span>
+                            <span class="diagram-icon"></span>
                         </label>
                         <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
                     </div>
@@ -240,9 +239,10 @@
                 <div class="card my-3">
                     <div class="card-body">
                         <h4 class="card-title">Toggle</h4>
-                        <label class="diagram-switch">
+                        <label class="diagram-switch" data-toggle="tooltip" data-placement="bottom"
+                               title="Diagram view on/off">
                             <input type="checkbox">
-                            <span class="checkmark-icon"></span>
+                            <span class="diagram-icon"></span>
                         </label>
                         <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
                     </div>
@@ -250,9 +250,10 @@
                 <div class="card my-3">
                     <div class="card-body">
                         <h4 class="card-title">Sound</h4>
-                        <label class="diagram-switch">
+                        <label class="diagram-switch" data-toggle="tooltip" data-placement="bottom"
+                               title="Diagram view on/off">
                             <input type="checkbox">
-                            <span class="checkmark-icon"></span>
+                            <span class="diagram-icon"></span>
                         </label>
                         <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
                     </div>
@@ -260,9 +261,10 @@
                 <div class="card my-3">
                     <div class="card-body">
                         <h4 class="card-title">A very long sensor name title</h4>
-                        <label class="diagram-switch">
+                        <label class="diagram-switch" data-toggle="tooltip" data-placement="bottom"
+                               title="Diagram view on/off">
                             <input type="checkbox">
-                            <span class="checkmark-icon"></span>
+                            <span class="diagram-icon"></span>
                         </label>
                         <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
                     </div>
@@ -270,9 +272,10 @@
                 <div class="card my-3">
                     <div class="card-body">
                         <h4 class="card-title">Sensor</h4>
-                        <label class="diagram-switch">
+                        <label class="diagram-switch" data-toggle="tooltip" data-placement="bottom"
+                               title="Diagram view on/off">
                             <input type="checkbox">
-                            <span class="checkmark-icon"></span>
+                            <span class="diagram-icon"></span>
                         </label>
                         <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
                     </div>
@@ -280,9 +283,10 @@
                 <div class="card my-3">
                     <div class="card-body">
                         <h4 class="card-title">Sensor</h4>
-                        <label class="diagram-switch">
+                        <label class="diagram-switch" data-toggle="tooltip" data-placement="bottom"
+                               title="Diagram view on/off">
                             <input type="checkbox">
-                            <span class="checkmark-icon"></span>
+                            <span class="diagram-icon"></span>
                         </label>
                         <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
                     </div>
@@ -291,6 +295,8 @@
         </main>
     </div>
 </div>
+
+<div id="sidebar-shadow" onclick="closeSidebar()"></div>
 
 <div class="modal fade" id="authentication-modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static"
      data-keyboard="false">
@@ -302,6 +308,45 @@
             <div class="modal-body">
                 <p id="modal-message">Please push the button on the device to generate a token. This is needed for
                     authentication.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="options-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="options-modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Options</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <p class="col-9">Displayed diagram time interval:</p>
+
+                    <div class="dropdown col-3">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            10&nbsp;s
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="#">10&nbsp;s</a>
+                            <a class="dropdown-item" href="#">30&nbsp;s</a>
+                            <a class="dropdown-item" href="#">1&nbsp;min</a>
+                            <a class="dropdown-item" href="#">5&nbsp;min</a>
+                            <a class="dropdown-item" href="#">10&nbsp;min</a>
+                            <a class="dropdown-item" href="#">30&nbsp;min</a>
+                            <a class="dropdown-item" href="#">1&nbsp;h</a>
+                            <a class="dropdown-item" href="#">6&nbsp;h</a>
+                            <a class="dropdown-item" href="#">12&nbsp;h</a>
+                            <a class="dropdown-item" href="#">1&nbsp;d</a>
+                            <a class="dropdown-item" href="#">2&nbsp;d</a>
+                            <a class="dropdown-item" href="#">7&nbsp;d</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
