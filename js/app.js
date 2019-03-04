@@ -287,8 +287,7 @@ function bindEvents() {
 
 $(function() {
 	$('#menu-list').sortable({ update: onElementReSorted });
-	//enabling drag 'n drop on the cards bricks the re-naming
-	//$('#main-cards').sortable({ update: onElementReSorted });
+	$('#main-cards').sortable({ update: onElementReSorted, cancel: 'h4' });
 	loadModel()
     ensureConnection(_ => {
 		loadCards()
