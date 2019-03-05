@@ -186,13 +186,6 @@
                         </svg>
                         <span class="d-none d-md-inline-block" style="color: white">Sensor Menu</span>
                     </a>
-                    <select id="timespanSelector">
-                        <option value="[-60*1,0]">last minute</option>
-                        <option value="[-60*60,0]">last hour</option>
-                        <option value="[-60*60*24,0]">last day</option>
-                        <option value="[-60*60*24*30,0]">last month</option>
-                        <option value="[-60*60*24*365,0]">last year</option>
-                    </select>
                 </div>
             </div>
 
@@ -334,23 +327,33 @@
                     <p class="col-9">Displayed diagram time interval:</p>
 
                     <div class="dropdown col-3">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             10&nbsp;s
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">10&nbsp;s</a>
-                            <a class="dropdown-item" href="#">30&nbsp;s</a>
-                            <a class="dropdown-item" href="#">1&nbsp;min</a>
-                            <a class="dropdown-item" href="#">5&nbsp;min</a>
-                            <a class="dropdown-item" href="#">10&nbsp;min</a>
-                            <a class="dropdown-item" href="#">30&nbsp;min</a>
-                            <a class="dropdown-item" href="#">1&nbsp;h</a>
-                            <a class="dropdown-item" href="#">6&nbsp;h</a>
-                            <a class="dropdown-item" href="#">12&nbsp;h</a>
-                            <a class="dropdown-item" href="#">1&nbsp;d</a>
-                            <a class="dropdown-item" href="#">2&nbsp;d</a>
-                            <a class="dropdown-item" href="#">7&nbsp;d</a>
+                            <a class="dropdown-item" href="#" value="[-10,0]">10&nbsp;s</a>
+                            <a class="dropdown-item" href="#" value="[-30,0]">30&nbsp;s</a>
+                            <a class="dropdown-item" href="#" value="[-60,0]">1&nbsp;min</a>
+                            <a class="dropdown-item" href="#" value="[-60*5,0]">5&nbsp;min</a>
+                            <a class="dropdown-item" href="#" value="[-60*10,0]">10&nbsp;min</a>
+                            <a class="dropdown-item" href="#" value="[-60*30,0]">30&nbsp;min</a>
+                            <a class="dropdown-item" href="#" value="[-60*60,0]">1&nbsp;h</a>
+                            <a class="dropdown-item" href="#" value="[-60*60*6,0]">6&nbsp;h</a>
+                            <a class="dropdown-item" href="#" value="[-60*60*12,0]">12&nbsp;h</a>
+                            <a class="dropdown-item" href="#" value="[-60*60*24,0]">1&nbsp;d</a>
+                            <a class="dropdown-item" href="#" value="[-60*60*48,0]">2&nbsp;d</a>
+                            <a class="dropdown-item" href="#" value="[-60*60*24*7,0]">7&nbsp;d</a>
+                            <a class="dropdown-item" href="#" value="[-60*60*24*30,0]">1&nbsp;month</a>
+                            <a class="dropdown-item" href="#" value="[-60*60*24*365/2,0]">6&nbsp;months</a>
+
+
+                            <select id="timespanSelector">
+                                <option value="[-60*1,0]">last minute</option>
+                                <option value="[-60*60,0]">last hour</option>
+                                <option value="[-60*60*24,0]">last day</option>
+                                <option value="[-60*60*24*30,0]">last month</option>
+                                <option value="[-60*60*24*365,0]">last year</option>
+                            </select>
                         </div>
                     </div>
                 </div>

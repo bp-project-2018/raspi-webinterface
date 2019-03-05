@@ -276,54 +276,50 @@ function onElementReSorted (event, ui) {
 }
 
 function timespanChanged() {
-	var selector = $('#timespanSelector')
-	Model.timespanStr = selector.val()
-	Model.timespan = eval(Model.timespanStr)
+	var selector = $(this)
+	Model.timespanStr = selector.text()
+	Model.timespan = eval(selector.attr('value'))
 	updateAllCanvas()
 	saveModel()
+	$('#dropdownMenuButton').html(Model.timespanStr)
 }
-
-function bindEvents() {
-    $(document).on('blur', '.card-title', cardTitleUpdated);
-	$(document).on('change', '.hidebox', hideBoxChanged)
-	$(document).on('change', '#timespanSelector', timespanChanged)
-}
-
-$(function() {
-	$('#menu-list').sortable({ update: onElementReSorted });
-	$('#main-cards').sortable({ update: onElementReSorted, cancel: 'h4' });
-	loadModel()
-    ensureConnection(_ => {
-		loadCards()
-        bindEvents()
-		setInterval(updateAllCanvas, 5000)
-		$('#timespanSelector').val(Model.timespanStr)
-    })
-
-	// initialize tooltips (with delayed show)
-	$('[data-toggle="tooltip"]').tooltip({
-		animation: true,
-		delay: {show: 1000, hide: 100}
-	})
-})
 
 function openSidebar() {
-	document.getElementById("sidebar").style.transform = "translateX(-300px)";
+	$('#sidebar').css('transform', 'translateX(-300px)')
 	$('#sidebar-shadow').fadeIn(500)
 }
 
 function closeSidebar() {
-	document.getElementById("sidebar").style.transform = "translateX(0px)";
+	$('#sidebar').css('transform', 'translateX(0px)')
 	$('#sidebar-shadow').fadeOut(500)
 }
 
-// bug prevention
-$(window).resize(function () {
-	if (window.matchMedia('screen and (min-width:992px)').matches) {
-		closeSidebar();	// reset sidebar to avoid invisible sidebar bugs
-	}
-});
-
 function openOptionsModal() {
-	$('#options-modal').modal('show');
+	$('#options-modal').modal('show')
 }
+
+function onWindowResize() {
+	if (window.matchMedia('screen and (min-width:992px)').matches) {
+		// reset sidebar to avoid invisible sidebar bugs on small devices
+		closeSidebar()
+	}
+}
+
+$(function() {
+	loadModel()
+    ensureConnection(_ => {
+		loadCards()
+		setInterval(updateAllCanvas, 5000)
+    })
+	$('#dropdownMenuButton').html(Model.timespanStr)
+	$(document).on('blur', '.card-title', cardTitleUpdated)
+	$(document).on('change', '.hidebox', hideBoxChanged)
+	$(document).on('click', '.dropdown-item', timespanChanged)
+	$('#menu-list').sortable({ update: onElementReSorted })
+	$('#main-cards').sortable({ update: onElementReSorted, cancel: 'h4' })
+	$('[data-toggle="tooltip"]').tooltip({
+		animation: true,
+		delay: {show: 1000, hide: 100}
+	})
+	$(window).resize(onWindowResize)
+})
