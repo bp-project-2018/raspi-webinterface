@@ -152,12 +152,17 @@ input:checked~.diagram-icon::after {
     overflow: hidden;
 }
 
+.bignumber {
+    font-size: 2em;
+    text-align: center;
+}
+
 .card .bignumber {
     display: block;
 }
 
 .card canvas {
-    display: none;
+    display: none !important;
 }
 
 .card-big .bignumber {
@@ -165,7 +170,7 @@ input:checked~.diagram-icon::after {
 }
 
 .card-big canvas {
-    display: block;
+    display: block !important;
 }
 
 .card-title {

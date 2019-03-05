@@ -20,6 +20,7 @@ function loadModel() {
     Model.devices = Model.devices || []
     Model.titles = Model.titles || {}
     Model.sorting = Model.sorting || {}
+	Model.toggles = Model.toggles || {}
 	Model.disabled = Model.disabled || {}
 	Model.timespan = Model.timespan || [-60*60,0]
 	Model.timespanStr = Model.timespanStr || '1 h'
@@ -50,7 +51,21 @@ function setMeasurementTitle(device, sensor, title) {
 	var titleId = `${device.id}/${sensor.id}`
 	Model.titles[titleId] = title
     $(`label[deviceId=${device.id}][sensorId=${sensor.id}] .titlespan`).html(title)
-    saveModel()
+	saveModel()
+}
+
+function getMeasurementToggle(device, sensor) {
+	var toggleId = `${device.id}/${sensor.id}`
+	if (toggleId in Model.toggles) return Model.toggles[toggleId]
+	else return false
+}
+
+function setMeasurementToggle(device, sensor, value) {
+	var toggleId = `${device.id}/${sensor.id}`
+	Model.toggles[toggleId] = value
+	saveModel()
+	$(`.card[deviceId=${device.id}][sensorId=${sensor.id}]`).toggleClass('card-big', !value)
+    $(`.card[deviceId=${device.id}][sensorId=${sensor.id}] input`).prop('checked', value)
 }
 
 function getMeasurementSorting(device, sensor) {
@@ -181,7 +196,8 @@ function renderSensors() {
 			var title = getMeasurementTitle(device, sensor)
 			var sorting = getMeasurementSorting(device, sensor)
 			var disabled = isSensorDisabled(device, sensor)
-			var card = $(`<div class="card my-3 card-big" deviceId="${device.id}" sensorId="${sensor.id}" chartColor="${randomColor()}" sorting="${sorting}">
+			var toggled = getMeasurementToggle(device, sensor)
+			var card = $(`<div class="card my-3 ${toggled ? '' : 'card-big'}" deviceId="${device.id}" sensorId="${sensor.id}" chartColor="${randomColor()}" sorting="${sorting}">
 							<div class="card-body">
 								<h4 class="card-title" contenteditable="true">${title}</h4>
 								<label class="diagram-switch" data-toggle="tooltip" data-placement="bottom" title="Diagram view on/off">
@@ -200,6 +216,7 @@ function renderSensors() {
 							</label>`)
 			labels.append(label)
 			cards.append(card)
+			setMeasurementToggle(device, sensor, toggled)
 			if (disabled) card.hide()
 		}
 	}
@@ -330,8 +347,14 @@ function restartRefreshInterval() {
 }
 
 function diagramSwitched() {
-	var card = $(this).parent().parent()
-	card.toggleClass('card-big')
+	var checkbox = $(this)
+	var value = checkbox.prop('checked')
+	var card = checkbox.parent().parent().parent()
+    var deviceId = card.attr('deviceId')
+    var sensorId = card.attr('sensorId')
+    var device = Model.devices.filter(x => x.id == deviceId)[0]
+    var sensor = device.sensors.filter(x => x.id == sensorId)[0]
+    setMeasurementToggle(device, sensor, value)
 }
 
 $(function() {
@@ -344,7 +367,7 @@ $(function() {
 	$('#refreshDropdown').html(Model.refreshIntervalStr)
 	$(document).on('blur', '.card-title', cardTitleUpdated)
 	$(document).on('change', '.hidebox', hideBoxChanged)
-	$(document).on('click', '.diagram-switch', diagramSwitched)
+	$(document).on('change', '.diagram-switch input', diagramSwitched)
 	$(document).on('click', '#timespanDropdownList .dropdown-item', timespanChanged)
 	$(document).on('click', '#refreshDropdownList .dropdown-item', refreshChanged)
 	$('#menu-list').sortable({ update: onElementReSorted, axis: 'y' })
