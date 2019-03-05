@@ -173,8 +173,7 @@ input:checked~.diagram-icon::after {
 }
 
 .card-title:focus {
-    /* TODO */
-    border-bottom: solid black 1px;
+    border-bottom: solid #3c3c3e 1px;
 }
 
 .card-title:hover::after {
@@ -241,4 +240,8 @@ input:checked~.diagram-icon::after {
         width: auto;
         transition: 0s;
     }
+}
+
+#options-button {
+    -webkit-appearance: none;
 }
