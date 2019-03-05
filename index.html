@@ -324,17 +324,13 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <p class="col-9">Displayed diagram time interval:</p>
-
+                    <p class="col-9">Displayed chart time interval:</p>
                     <div class="dropdown col-3">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            10&nbsp;s
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="timespanDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            1&nbsp;min
                         </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#" value="[-10,0]">10&nbsp;s</a>
-                            <a class="dropdown-item" href="#" value="[-30,0]">30&nbsp;s</a>
+                        <div class="dropdown-menu" aria-labelledby="timespanDropdown" id="timespanDropdownList">
                             <a class="dropdown-item" href="#" value="[-60,0]">1&nbsp;min</a>
-                            <a class="dropdown-item" href="#" value="[-60*5,0]">5&nbsp;min</a>
                             <a class="dropdown-item" href="#" value="[-60*10,0]">10&nbsp;min</a>
                             <a class="dropdown-item" href="#" value="[-60*30,0]">30&nbsp;min</a>
                             <a class="dropdown-item" href="#" value="[-60*60,0]">1&nbsp;h</a>
@@ -347,7 +343,21 @@
                             <a class="dropdown-item" href="#" value="[-60*60*24*365/2,0]">6&nbsp;months</a>
                         </div>
                     </div>
-
+                </div>
+                <div class="row">
+                    <p class="col-9">Chart refresh rate:</p>
+                    <div class="dropdown col-3">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="refreshDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            5&nbsp;s
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="refreshDropdown" id="refreshDropdownList">
+                            <a class="dropdown-item" href="#" value="1">1&nbsp;s</a>
+                            <a class="dropdown-item" href="#" value="2">3&nbsp;s</a>
+                            <a class="dropdown-item" href="#" value="5">6&nbsp;s</a>
+                            <a class="dropdown-item" href="#" value="10">10&nbsp;s</a>
+                            <a class="dropdown-item" href="#" value="60">60&nbsp;s</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

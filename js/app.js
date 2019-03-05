@@ -23,6 +23,8 @@ function loadModel() {
 	Model.disabled = Model.disabled || {}
 	Model.timespan = Model.timespan || [-60*60,0]
 	Model.timespanStr = Model.timespanStr || '[-60*60,0]'
+	Model.refreshInterval = Model.refreshInterval || 5
+	Model.refreshIntervalStr = Model.refreshIntervalStr || '5 s'
 	
     Api.setToken(Model.token)
 }
@@ -281,7 +283,7 @@ function timespanChanged() {
 	Model.timespan = eval(selector.attr('value'))
 	updateAllCanvas()
 	saveModel()
-	$('#dropdownMenuButton').html(Model.timespanStr)
+	$('#timespanDropdown').html(Model.timespanStr)
 }
 
 function openSidebar() {
@@ -305,21 +307,37 @@ function onWindowResize() {
 	}
 }
 
+function refreshChanged() {
+	var selector = $(this)
+	Model.refreshIntervalStr = selector.text()
+	Model.refreshInterval = eval(selector.attr('value'))
+	restartRefreshInterval()
+	saveModel()
+	$('#refreshDropdown').html(Model.refreshIntervalStr)
+}
+
+function restartRefreshInterval() {
+	if (window.globalRefreshInterval) clearInterval(window.globalRefreshInterval)
+	window.globalRefreshInterval = setInterval(updateAllCanvas, Model.refreshInterval * 1000)
+}
+
 $(function() {
 	loadModel()
     ensureConnection(_ => {
 		loadCards()
-		setInterval(updateAllCanvas, 5000)
+		restartRefreshInterval()
     })
-	$('#dropdownMenuButton').html(Model.timespanStr)
+	$('#timespanDropdown').html(Model.timespanStr)
+	$('#refreshDropdown').html(Model.refreshIntervalStr)
 	$(document).on('blur', '.card-title', cardTitleUpdated)
 	$(document).on('change', '.hidebox', hideBoxChanged)
-	$(document).on('click', '.dropdown-item', timespanChanged)
-	$('#menu-list').sortable({ update: onElementReSorted })
+	$(document).on('click', '#timespanDropdownList .dropdown-item', timespanChanged)
+	$(document).on('click', '#refreshDropdownList .dropdown-item', refreshChanged)
+	$('#menu-list').sortable({ update: onElementReSorted, axis: 'y' })
 	$('#main-cards').sortable({ update: onElementReSorted, cancel: 'h4' })
 	$('[data-toggle="tooltip"]').tooltip({
 		animation: true,
-		delay: {show: 1000, hide: 100}
+		delay: { show: 1000, hide: 100 }
 	})
 	$(window).resize(onWindowResize)
 })
