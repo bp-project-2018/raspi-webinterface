@@ -109,6 +109,8 @@ function ensureConnection(successCallback) {
 }
 
 function displayChart(canvas, datapoints, unit, chartColor, relativeNow) {
+	var dashboard = $('#dashboard')
+	var offset = dashboard.scrollTop()
 	var config = {
 		type: 'line',
 		data: {
@@ -161,6 +163,7 @@ function displayChart(canvas, datapoints, unit, chartColor, relativeNow) {
 	var ctx = canvas.get(0).getContext('2d')
 	var chart = new Chart(ctx, config)
 	canvas.data('chart', chart)
+	dashboard.scrollTop(offset)
 	return chart
 }
 
@@ -237,7 +240,7 @@ function sortElements() {
 }
 
 function updateAllCanvas() {
-    $('.card-body').each(function(i, element) {
+	$('.card-body').each(function(i, element) {
         var canvas = $(element).find('canvas')
         var bignumber = $(element).find('.bignumber')
         var card = canvas.parent().parent()
@@ -256,13 +259,13 @@ function updateAllCanvas() {
                 var normalized = res.datapoints.map(data => ({ x: data[0], y: data[1] }))
 				displayChart(canvas, normalized, sensor.unit, chartColor, relativeNow)
 				var valid = normalized.filter(data => data.y != null)
-				var number = Math.floor(valid[valid.length-1].y*10)/10
+				var number = valid.length > 0 ? Math.floor(valid[valid.length-1].y*10)/10 : 'N/A'
 				bignumber.html(`${number} ${sensor.unit}`)
             })
             .catch(err => {
                 console.log(err)
             })
-    })
+	})
 }
 
 function cardTitleUpdated() {
@@ -376,10 +379,9 @@ $(function() {
 		cancel: 'h4',
 		placeholder: 'card my-3 placeholder',
 		start: function(e, ui){
-		if (ui.item.hasClass('card-big'))
-            ui.placeholder.addClass('card-big');
-		ui.placeholder.outerHeight(ui.item.outerHeight())
-        } })
+			if (ui.item.hasClass('card-big')) ui.placeholder.addClass('card-big');
+			ui.placeholder.outerHeight(ui.item.outerHeight())
+        }})
 	$('[data-toggle="tooltip"]').tooltip({
 		animation: true,
 		delay: { show: 1000, hide: 100 }
