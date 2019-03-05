@@ -25,6 +25,7 @@ main {
     padding: 0;
     background-color: #323232;
     overflow-y: auto;
+    overflow-x: hidden;
     position: fixed;
     top: 0;
     right: -300px;
@@ -151,9 +152,29 @@ input:checked~.diagram-icon::after {
     overflow: hidden;
 }
 
+.card .bignumber {
+    display: block;
+}
+
+.card canvas {
+    display: none;
+}
+
+.card-big .bignumber {
+    display: none;
+}
+
+.card-big canvas {
+    display: block;
+}
+
 .card-title {
     position: relative;
     margin-right: 1.1em;
+    border-bottom: solid transparent 1px;
+    padding-bottom: 0.1em;
+    min-height: 1em;
+    outline: none;
 }
 
 .card-title::after {
@@ -180,12 +201,17 @@ input:checked~.diagram-icon::after {
     opacity: 0.7;
 }
 
+.card-title:focus::after {
+    opacity: 0;
+}
+
 .page-content {
     height: 100vh;
 }
 
 #dashboard {
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .custom-control-label {
@@ -225,6 +251,10 @@ input:checked~.diagram-icon::after {
     background: #313639;
 }
 
+.highlight {
+    border: dashed gray 1px;
+}
+
 /* for small displays (Bootstrap "md") */
 @media (min-width: 576px) {
     .card-big {
@@ -244,4 +274,8 @@ input:checked~.diagram-icon::after {
 
 #options-button {
     -webkit-appearance: none;
+}
+
+.no-br br {
+    display: none;
 }

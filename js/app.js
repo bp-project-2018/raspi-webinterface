@@ -25,7 +25,7 @@ function loadModel() {
 	Model.timespanStr = Model.timespanStr || '[-60*60,0]'
 	Model.refreshInterval = Model.refreshInterval || 5
 	Model.refreshIntervalStr = Model.refreshIntervalStr || '5 s'
-	
+
     Api.setToken(Model.token)
 }
 
