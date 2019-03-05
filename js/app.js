@@ -184,7 +184,12 @@ function renderSensors() {
 			var card = $(`<div class="card my-3 card-big" deviceId="${device.id}" sensorId="${sensor.id}" chartColor="${randomColor()}" sorting="${sorting}">
 							<div class="card-body">
 								<h4 class="card-title" contenteditable="true">${title}</h4>
+								<label class="diagram-switch" data-toggle="tooltip" data-placement="bottom" title="Diagram view on/off">
+									<input type="checkbox">
+									<span class="diagram-icon"></span>
+								</label>
 								<canvas></canvas>
+								<label class="bignumber"></label>
 							</div>
 						</div>`)
 			var label = $(`<label class="list-group-item list-group-item-action" deviceId="${device.id}" sensorId="${sensor.id}" sorting="${sorting}">
@@ -215,8 +220,9 @@ function sortElements() {
 }
 
 function updateAllCanvas() {
-    $('canvas').each(function(i, element) {
-        var canvas = $(element)
+    $('.card-body').each(function(i, element) {
+        var canvas = $(element).find('canvas')
+        var bignumber = $(element).find('.bignumber')
         var card = canvas.parent().parent()
         var deviceId = card.attr('deviceId')
         var sensorId = card.attr('sensorId')
@@ -231,7 +237,10 @@ function updateAllCanvas() {
 				res.datapoints = res.datapoints || []
 				var relativeNow = new Date(res.relativeTime)
                 var normalized = res.datapoints.map(data => ({ x: data[0], y: data[1] }))
-                displayChart(canvas, normalized, sensor.unit, chartColor, relativeNow)
+				displayChart(canvas, normalized, sensor.unit, chartColor, relativeNow)
+				var valid = normalized.filter(data => data.y != null)
+				var number = Math.floor(valid[valid.length-1].y*10)/10
+				bignumber.html(`${number} ${sensor.unit}`)
             })
             .catch(err => {
                 console.log(err)
@@ -320,6 +329,11 @@ function restartRefreshInterval() {
 	window.globalRefreshInterval = setInterval(updateAllCanvas, Model.refreshInterval * 1000)
 }
 
+function diagramSwitched() {
+	var card = $(this).parent().parent()
+	card.toggleClass('card-big')
+}
+
 $(function() {
 	loadModel()
     ensureConnection(_ => {
@@ -330,6 +344,7 @@ $(function() {
 	$('#refreshDropdown').html(Model.refreshIntervalStr)
 	$(document).on('blur', '.card-title', cardTitleUpdated)
 	$(document).on('change', '.hidebox', hideBoxChanged)
+	$(document).on('click', '.diagram-switch', diagramSwitched)
 	$(document).on('click', '#timespanDropdownList .dropdown-item', timespanChanged)
 	$(document).on('click', '#refreshDropdownList .dropdown-item', refreshChanged)
 	$('#menu-list').sortable({ update: onElementReSorted, axis: 'y' })
