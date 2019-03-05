@@ -22,7 +22,7 @@ function loadModel() {
     Model.sorting = Model.sorting || {}
 	Model.disabled = Model.disabled || {}
 	Model.timespan = Model.timespan || [-60*60,0]
-	Model.timespanStr = Model.timespanStr || '[-60*60,0]'
+	Model.timespanStr = Model.timespanStr || '1 h'
 	Model.refreshInterval = Model.refreshInterval || 5
 	Model.refreshIntervalStr = Model.refreshIntervalStr || '5 s'
 	
@@ -184,7 +184,6 @@ function renderSensors() {
 			var card = $(`<div class="card my-3 card-big" deviceId="${device.id}" sensorId="${sensor.id}" chartColor="${randomColor()}" sorting="${sorting}">
 							<div class="card-body">
 								<h4 class="card-title" contenteditable="true">${title}</h4>
-								<p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
 								<canvas></canvas>
 							</div>
 						</div>`)
