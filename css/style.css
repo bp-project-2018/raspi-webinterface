@@ -284,3 +284,11 @@ input:checked~.diagram-icon::after {
 .no-br br {
     display: none;
 }
+
+.placeholder {
+    background: transparent;
+    border-style: dashed;
+    border-width: 2px;
+    min-height: 4em;
+    box-sizing: border-box;
+}

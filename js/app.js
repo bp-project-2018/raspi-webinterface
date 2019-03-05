@@ -370,8 +370,16 @@ $(function() {
 	$(document).on('change', '.diagram-switch input', diagramSwitched)
 	$(document).on('click', '#timespanDropdownList .dropdown-item', timespanChanged)
 	$(document).on('click', '#refreshDropdownList .dropdown-item', refreshChanged)
+	$(document).on('click', '.dropdown-item', timespanChanged)
 	$('#menu-list').sortable({ update: onElementReSorted, axis: 'y' })
-	$('#main-cards').sortable({ update: onElementReSorted, cancel: 'h4' })
+	$('#main-cards').sortable({ update: onElementReSorted,
+		cancel: 'h4',
+		placeholder: 'card my-3 placeholder',
+		start: function(e, ui){
+		if (ui.item.hasClass('card-big'))
+            ui.placeholder.addClass('card-big');
+		ui.placeholder.outerHeight(ui.item.outerHeight())
+        } })
 	$('[data-toggle="tooltip"]').tooltip({
 		animation: true,
 		delay: { show: 1000, hide: 100 }
