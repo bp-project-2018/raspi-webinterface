@@ -157,14 +157,14 @@
         <main role="main" class="ml-sm-auto col-lg-10 px-4 page-content" id="dashboard">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h1">Dashboard</h1>
-                <a class="btn btn-primary btn-lg d-lg-none">
-                    <span class="glyphicon glyphicon-menu-hamburger"></span> <span class="d-none d-md-block">Sensor Menu</span>
-                </a>
                 <select id="timespanSelector">
                     <option value="[-60*1,0]">last minute</option>
+                    <option value="[-60*30,0]">last 30 minutes</option>
                     <option value="[-60*60,0]">last hour</option>
                     <option value="[-60*60*24,0]">last day</option>
+                    <option value="[-60*60*24*10,0]">last 10 days</option>
                     <option value="[-60*60*24*30,0]">last month</option>
+                    <option value="[-60*60*24*365/2,0]">last 6 months</option>
                     <option value="[-60*60*24*365,0]">last year</option>
                 </select>
             </div>
