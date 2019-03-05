@@ -63,8 +63,8 @@ function setMeasurementSorting(device, sensor, sorting) {
 	// saveModel() has to be invoked by the caller himself for performance reasons on bulk sets
 }
 
-function displayDateRelativeToNow(date) {
-	var now = new Date()
+function displayDateRelativeToNow(date, now) {
+	now = now || new Date()
 	var delta = Math.floor((now - date)/1000)
 	if (delta < 60) return `-${delta}s`
 	if (delta < 3600) return `-${Math.floor(delta/60)}min`
@@ -91,7 +91,7 @@ function ensureConnection(successCallback) {
 		})
 }
 
-function displayChart(canvas, datapoints, unit, chartColor) {
+function displayChart(canvas, datapoints, unit, chartColor, relativeNow) {
 	var config = {
 		type: 'line',
 		data: {
@@ -105,7 +105,10 @@ function displayChart(canvas, datapoints, unit, chartColor) {
 		options: {
 			animation: false,
 			spanGaps: true,
-			elements: { point: { radius: 0 } },
+			elements: {
+				point: { radius: 0 },
+				line: { cubicInterpolationMode: 'monotone' }
+			},
 			responsive: true,
 			title: { display: false },
 			legend: { display: false },
@@ -122,7 +125,7 @@ function displayChart(canvas, datapoints, unit, chartColor) {
 						autoSkip: true,
 						maxTicksLimit: 4,
 						maxRotation: 0,
-						callback: value => displayDateRelativeToNow(new Date(value))
+						callback: value => displayDateRelativeToNow(new Date(value), relativeNow)
 					}
 				}],
 				yAxes: [{
@@ -221,12 +224,13 @@ function updateAllCanvas() {
         var sensor = device.sensors.filter(x => x.id == sensorId)[0]
         var relativeBegin = Model.timespan[0]
         var relativeEnd = Model.timespan[1]
-        var resolutionSeconds = Math.floor((relativeEnd - relativeBegin) / 60000)
+        var resolutionSeconds = Math.max(Math.floor((relativeEnd - relativeBegin) / 100), 1)
         Api.queryDataRelative(device.id, sensor.id, relativeBegin, relativeEnd, resolutionSeconds)
             .then(res => {
 				res.datapoints = res.datapoints || []
+				var relativeNow = new Date(res.relativeTime)
                 var normalized = res.datapoints.map(data => ({ x: data[0], y: data[1] }))
-                displayChart(canvas, normalized, sensor.unit, chartColor)
+                displayChart(canvas, normalized, sensor.unit, chartColor, relativeNow)
             })
             .catch(err => {
                 console.log(err)
