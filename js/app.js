@@ -74,7 +74,6 @@ function displayDateRelativeToNow(date) {
 }
 
 function ensureConnection(successCallback) {
-	/*
     Api.getStatus()
 		.then(successCallback)
 		.catch(err => {
@@ -89,7 +88,7 @@ function ensureConnection(successCallback) {
 					err = err.statusText || err
                     $('#modal-message').html('Failed to request token from device: ' + err)
                 })
-		})*/
+		})
 }
 
 function displayChart(canvas, datapoints, unit, chartColor) {
