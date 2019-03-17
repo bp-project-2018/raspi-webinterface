@@ -9,14 +9,14 @@ var Api = {
 	},
 
 	request: function(method, url, data) {
-		console.log(Api.enpoint + url)
+		console.log(Api.endpoint + url)
 		return new Promise((resolve, reject) => {
 			var responseHandler = (res) => {
 				if (res.err) reject(res.err)
 				else resolve(res)
 			}
 			$.ajax({
-				url: Api.enpoint + url,
+				url: Api.endpoint + url,
 				type: method,
 				data: JSON.stringify(data),
 				contentType: 'application/json; charset=utf-8',
