@@ -374,7 +374,6 @@ $(function() {
 	$(document).on('change', '.diagram-switch input', diagramSwitched)
 	$(document).on('click', '#timespanDropdownList .dropdown-item', timespanChanged)
 	$(document).on('click', '#refreshDropdownList .dropdown-item', refreshChanged)
-	$(document).on('click', '.dropdown-item', timespanChanged)
 	$('#menu-list').sortable({ update: onElementReSorted, axis: 'y' })
 	$('#main-cards').sortable({ update: onElementReSorted,
 		cancel: 'h4',
