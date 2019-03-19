@@ -58,14 +58,14 @@ function setMeasurementTitle(device, sensor, title) {
 function getMeasurementToggle(device, sensor) {
 	var toggleId = `${device.id}/${sensor.id}`
 	if (toggleId in Model.toggles) return Model.toggles[toggleId]
-	else return false
+	else return true
 }
 
 function setMeasurementToggle(device, sensor, value) {
 	var toggleId = `${device.id}/${sensor.id}`
 	Model.toggles[toggleId] = value
 	saveModel()
-	$(`.card[deviceId=${device.id}][sensorId=${sensor.id}]`).toggleClass('card-big', !value)
+	$(`.card[deviceId=${device.id}][sensorId=${sensor.id}]`).toggleClass('card-big', value)
     $(`.card[deviceId=${device.id}][sensorId=${sensor.id}] input`).prop('checked', value)
 }
 
