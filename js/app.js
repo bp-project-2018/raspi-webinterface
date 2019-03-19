@@ -51,6 +51,7 @@ function setMeasurementTitle(device, sensor, title) {
 	var titleId = `${device.id}/${sensor.id}`
 	Model.titles[titleId] = title
     $(`label[deviceId=${device.id}][sensorId=${sensor.id}] .titlespan`).html(title)
+	$(`.card[deviceId=${device.id}][sensorId=${sensor.id}] h4`).html(title)
 	saveModel()
 }
 
@@ -270,7 +271,7 @@ function updateAllCanvas() {
 
 function cardTitleUpdated() {
     var element = $(this)
-    var title = element.text()
+	var title = element.text().replace(/([^A-Za-z0-9\-\s+*:;,.()/\\]+)/gi, '')
     var card = element.parent().parent()
     var deviceId = card.attr('deviceId')
     var sensorId = card.attr('sensorId')
