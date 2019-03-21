@@ -38,6 +38,7 @@ main {
 
 #sidebar .custom-control-label {
     color: #e2e2e2;
+    word-break: break-word;
 }
 
 #sidebar .list-group-item:hover .custom-control-label {
@@ -63,12 +64,34 @@ main {
 .list-group-item {
     border: none;
     background-color: transparent;
-    padding-right: 1em;
+    padding-right: 1.8em;
+    position: relative;
 }
 
 .list-group-item:hover {
     background-color: #3c3c3c;
     cursor: pointer;
+}
+
+.list-group-item:hover .drag-icon {
+    display: inline-block;
+}
+
+.list-group-item .drag-icon {
+    display: inline-block;
+    height: 1.3em;
+    position: absolute;
+    right: 0.4em;
+    top: 50%;
+    margin-top: -0.65em;
+}
+
+.list-group-item:active {
+    background-color: #3c3c3c;
+}
+
+.drag-icon:hover {
+    cursor: move;
 }
 
 #sensor-menu-header {
@@ -94,7 +117,7 @@ main {
     position: absolute;
     top: 0;
     right: 0;
-    margin: 1em 1em 0 0;
+    margin: 0.7em 0.7em 0 0;
 
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -173,8 +196,33 @@ input:checked~.diagram-icon::after {
     display: block !important;
 }
 
+.card-body {
+    position: relative;
+}
+
+.card-body .drag-icon {
+    opacity: 0.6;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    height: 1.3em;
+    margin-left: -0.65em;
+    transform: rotate(90deg);
+    transition: all 0.2s;
+}
+
+.card-body:hover .drag-icon {
+    opacity: 0.6;
+    transition: all 0.2s;
+}
+
+.card .ui-sortable-helper {
+    cursor: move;
+}
+
 .card-title {
     position: relative;
+    margin-top: 0.25em;
     margin-right: 1.1em;
     border-bottom: solid transparent 1px;
     padding-bottom: 0.1em;
@@ -199,7 +247,8 @@ input:checked~.diagram-icon::after {
 }
 
 .card-title:focus {
-    border-bottom: solid #3c3c3e 1px;
+    border-bottom: solid #515153 1px;
+    transition: border-bottom-color 0.2s;
 }
 
 .card-title:hover::after {
@@ -215,7 +264,7 @@ input:checked~.diagram-icon::after {
 }
 
 #dashboard {
-    overflow-y: auto;
+    overflow-y: scroll;
     overflow-x: hidden;
 }
 
@@ -264,6 +313,15 @@ input:checked~.diagram-icon::after {
 @media (min-width: 576px) {
     .card-big {
         min-width: 30em;
+    }
+
+    .list-group-item .drag-icon {
+        display: none;
+    }
+
+    .card-body .drag-icon {
+        opacity: 0;
+        transition: all 0.2s;
     }
 }
 
